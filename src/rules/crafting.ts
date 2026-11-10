@@ -5,6 +5,7 @@ import type {
   CraftingInputs,
   Degree,
   Proficiency,
+  Rarity,
   RulesVersion,
 } from './types';
 
@@ -29,11 +30,15 @@ export function remainingCost(priceCp: number): number {
   return priceCp - upfrontCost(priceCp);
 }
 
-/** Craft DC for an item level (common rarity). */
-export function craftDc(itemLevel: number): number {
+/** DC adjustment for an item's rarity (GM Core pg. 53). */
+export const RARITY_DC_ADJUSTMENT: Readonly<Record<Rarity, number>> =
+  Object.freeze({ common: 0, uncommon: 2, rare: 5, unique: 10 });
+
+/** Craft DC for an item level, adjusted for the item's rarity. */
+export function craftDc(itemLevel: number, rarity: Rarity = 'common'): number {
   const dc = DC_BY_LEVEL[clampInt(itemLevel, 0, DC_BY_LEVEL.length - 1)];
   if (dc === undefined) throw new RangeError(`No DC for level ${itemLevel}`);
-  return dc;
+  return dc + RARITY_DC_ADJUSTMENT[rarity];
 }
 
 /** Per-day cost reduction from the Income Earned table. */
@@ -231,7 +236,7 @@ export function calculate(inputs: CraftingInputs): CraftingResult {
   const setup = setupDays(inputs.rulesVersion, inputs.hasFormula);
   const upfront = upfrontCost(inputs.priceCp);
   const remaining = remainingCost(inputs.priceCp);
-  const dc = craftDc(inputs.itemLevel);
+  const dc = craftDc(inputs.itemLevel, inputs.rarity);
   const checkBonus =
     inputs.bonus + specialtyBonus(inputs.hasSpecialty, inputs.proficiency);
   const impeccable =

@@ -7,7 +7,7 @@
  * APIs, and import other modules with explicit `.ts` extensions.
  */
 import { MAX_PRICE_CP } from './money.ts';
-import { LIMITS } from './rules/types.ts';
+import { LIMITS, RARITIES, type Rarity } from './rules/types.ts';
 
 export const AON_SEARCH_URL = 'https://elasticsearch.aonprd.com/aon/_search';
 export const AON_SITE = 'https://2e.aonprd.com';
@@ -23,7 +23,6 @@ const AON_PATH = /^\/[A-Za-z]+\.aspx\?ID=\d+$/;
 
 const MAX_NAME_LENGTH = 200;
 const MAX_ID_LENGTH = 100;
-const RARITIES = ['common', 'uncommon', 'rare', 'unique'] as const;
 
 export interface ItemMatch {
   /** AoN document id, unique per variant (e.g. "equipment-2943-2812"). */
@@ -31,7 +30,7 @@ export interface ItemMatch {
   readonly name: string;
   readonly level: number;
   readonly priceCp: number;
-  readonly rarity: string;
+  readonly rarity: Rarity;
   /** True for a Legacy item that has a Remaster replacement. */
   readonly legacy: boolean;
   /** Absolute link to the item's AoN page, or null if unknown. */
@@ -44,7 +43,7 @@ export interface StoredItem {
   readonly name: string;
   readonly level: number;
   readonly priceCp: number;
-  readonly rarity: string;
+  readonly rarity: Rarity;
   readonly legacy: boolean;
   /** AoN page path, e.g. "/Equipment.aspx?ID=2943", or null. */
   readonly path: string | null;
@@ -113,7 +112,7 @@ export function toStoredItem(fields: {
     level,
     priceCp,
     rarity: (RARITIES as readonly unknown[]).includes(rarity)
-      ? (rarity as string)
+      ? (rarity as Rarity)
       : 'common',
     legacy,
     path: validPath(path),

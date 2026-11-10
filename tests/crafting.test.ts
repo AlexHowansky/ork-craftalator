@@ -25,6 +25,7 @@ const base: CraftingInputs = {
   bonus: 7,
   characterLevel: 1,
   itemLevel: 1,
+  rarity: 'common',
   priceCp: 2000,
   additionalDays: 0,
 };
@@ -76,6 +77,13 @@ describe('craftDc', () => {
     expect(craftDc(0)).toBe(14);
     expect(craftDc(9)).toBe(26);
     expect(craftDc(20)).toBe(40);
+  });
+
+  it('adds the rarity adjustment', () => {
+    expect(craftDc(5, 'common')).toBe(20);
+    expect(craftDc(5, 'uncommon')).toBe(22);
+    expect(craftDc(5, 'rare')).toBe(25);
+    expect(craftDc(5, 'unique')).toBe(30);
   });
 });
 
@@ -129,6 +137,13 @@ describe('itemLevelLimitReason', () => {
 });
 
 describe('calculate', () => {
+  it('raises the DC for rarity', () => {
+    const common = calculate(base);
+    const rare = calculate({ ...base, rarity: 'rare' });
+    expect(rare.dc).toBe(common.dc + 5);
+    expect(rare.odds).toEqual(checkOdds(base.bonus, rare.dc));
+  });
+
   it('matches the worked example', () => {
     const r = calculate({ ...base, additionalDays: 25 });
     expect(r.upfrontCp).toBe(1000);

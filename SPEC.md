@@ -47,8 +47,8 @@ Pathfinder 2nd edition role playing system.
     their level, Price and, when not common, rarity; Legacy
     items that have a Remaster version are marked Legacy. Choosing a
     match (mouse or arrow keys and Enter) fills in the item level and the item
-    Price and recalculates everything, including the Crafting DC and
-    initial cost. A link to the item's AoN page is then shown.
+    Price, sets the rarity and recalculates everything, including the
+    Crafting DC and initial cost. A link to the item's AoN page is then shown.
     Matches above the highest level the crafter can Craft (see Item level
     limit) are shown ghosted, marked too high to Craft, and can't be
     chosen; the arrow keys skip them. A note under the box credits AoN
@@ -66,6 +66,10 @@ Pathfinder 2nd edition role playing system.
   * The retail price of the item. Implemented as a text box. Accepts
     amounts such as `15 gp`, `3 gp 5 sp`, `40 cp` or `1 pp`. A bare number
     is read as gold pieces (decimals allowed, e.g. `2.5`).
+
+  * Rarity of the item. Implemented as a selector. Values are: common,
+    uncommon, rare, unique. Defaults to common. Set automatically when an
+    item is chosen from the search; can be changed by hand.
 
   * The number of additional days spent. Implemented as a text box with a
     slider. The user can type a value or use the slider to adjust within the
@@ -93,7 +97,7 @@ Pathfinder 2nd edition role playing system.
 
 * Layout: three panels. Crafter holds, in order, the rules version,
   character level, Crafting proficiency and Crafting bonus. Item holds the item
-  search, item level, item Price and the formula, Specialty Crafting and
+  search, item level, item Price, rarity and the formula, Specialty Crafting and
   Impeccable Crafting checkboxes. Results holds the outputs and the
   additional days spent. On a wide screen the three sit side by side and
   everything fits a 1920x1080 window without scrolling; on a medium screen
@@ -110,8 +114,8 @@ Pathfinder 2nd edition role playing system.
   * Remaster: 2 days, or 1 day with the formula.
   * Legacy: 4 days, or 2 days with the formula.
 
-* Crafting check DC: the DCs by Level table for the item level (common
-  rarity assumed). The app shows the chance of each degree of success using
+* Crafting check DC: the DCs by Level table for the item level, adjusted
+  for rarity: uncommon +2, rare +5, unique +10. The app shows the chance of each degree of success using
   the Crafting skill bonus on a d20, including the natural 1 and natural 20
   rules.
 

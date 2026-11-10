@@ -10,8 +10,10 @@ import {
 import {
   LIMITS,
   PROFICIENCIES,
+  RARITIES,
   RULES_VERSIONS,
   type Proficiency,
+  type Rarity,
   type RulesVersion,
 } from '../rules/types';
 import { byId, setError } from './dom';
@@ -55,6 +57,7 @@ export function initForm(): void {
   const hasFormula = byId('has-formula', HTMLInputElement);
   const hasSpecialty = byId('has-specialty', HTMLInputElement);
   const hasImpeccable = byId('has-impeccable', HTMLInputElement);
+  const rarity = byId('rarity', HTMLSelectElement);
   const price = byId('price', HTMLInputElement);
   const priceError = byId('price-error', HTMLElement);
   const itemLimit = byId('item-level-limit', HTMLElement);
@@ -142,6 +145,7 @@ export function initForm(): void {
       bonus: bonus.value,
       characterLevel: characterLevel.value,
       itemLevel: itemLevel.value,
+      rarity: oneOf<Rarity>(RARITIES, rarity.value, 'common'),
       priceCp: parsed.cp,
       additionalDays: days.value,
     };
@@ -163,7 +167,7 @@ export function initForm(): void {
     }
   }
 
-  for (const el of [rulesVersion, hasFormula, hasImpeccable]) {
+  for (const el of [rulesVersion, rarity, hasFormula, hasImpeccable]) {
     el.addEventListener('change', update);
   }
   hasSpecialty.addEventListener('change', () => {
@@ -186,6 +190,7 @@ export function initForm(): void {
     maxLevel: () => maxItemLevel(characterLevel.value, currentProficiency()),
     onSelect: (item) => {
       price.value = formatCp(item.priceCp);
+      rarity.value = item.rarity;
       itemLevel.setValue(item.level);
       update();
     },

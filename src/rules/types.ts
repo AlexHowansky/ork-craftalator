@@ -9,6 +9,10 @@ export type Proficiency = (typeof PROFICIENCIES)[number];
 export const RULES_VERSIONS = ['remaster', 'legacy'] as const;
 export type RulesVersion = (typeof RULES_VERSIONS)[number];
 
+/** Item rarities, in the order AoN and the rarity selector use. */
+export const RARITIES = ['common', 'uncommon', 'rare', 'unique'] as const;
+export type Rarity = (typeof RARITIES)[number];
+
 export type Degree = 'criticalSuccess' | 'success';
 
 export const LIMITS = Object.freeze({
@@ -28,6 +32,8 @@ export interface CraftingInputs {
   readonly bonus: number;
   readonly characterLevel: number;
   readonly itemLevel: number;
+  /** Item rarity; raises the Crafting DC unless common. */
+  readonly rarity: Rarity;
   /** Item Price in copper pieces. */
   readonly priceCp: number;
   readonly additionalDays: number;
