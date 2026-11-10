@@ -71,11 +71,12 @@ Pathfinder 2nd edition role playing system.
   position of the additional days spent slider.
 
 * Appearance: a modern steampunk theme. Flat warm surfaces with hairline
-  borders and rounded corners; brass and copper are used as accents (a
-  brass-to-copper strip atop each panel, brass sliders and focus rings, a
-  gear logo and a faint gear watermark that slowly turn, still when the
-  user prefers reduced motion). The title and panel headers use New
-  Rocker, a hammered blackletter display face; other headings and key
+  borders and rounded corners over a fixed parchment blueprint backdrop,
+  softened by a wash of the page colour (heavier in dark mode) so text
+  stays readable; brass and copper are used as accents (a
+  brass-to-copper strip atop each panel, brass sliders and focus
+  rings). The title and panel headers use New Rocker, a hammered
+  blackletter display face; other headings and key
   figures use a serif; body text uses the system sans-serif. Light and
   dark modes follow the system.
 

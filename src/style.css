@@ -1,10 +1,8 @@
 /*
  * Modern steampunk theme: flat warm surfaces, hairline borders, and brass
- * and copper used as accents rather than textures. The gear is an inline
- * SVG used as a CSS mask (allowed by the CSP's img-src data:), so it takes
- * its colour from the theme tokens. The only web font is New Rocker for
- * the title and panel headers, self-hosted from @fontsource (see
- * src/main.ts).
+ * and copper used as accents rather than textures. The only web font is
+ * New Rocker for the title and panel headers, self-hosted from
+ * @fontsource (see src/main.ts).
  */
 :root {
   --bg: #f5f1ea;
@@ -22,6 +20,7 @@
   --s: #8fae4a;
   --f: #e0a43a;
   --cf: #c2412e;
+  --bg-wash: 55%;
   --radius: 14px;
   --shadow:
     0 1px 2px rgb(60 40 20 / 0.06), 0 8px 24px -12px rgb(60 40 20 / 0.18);
@@ -31,7 +30,6 @@
     'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia,
     serif;
   --title: 'New Rocker', var(--display);
-  --gear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill-rule='evenodd' d='M38.6 14.8L43.1 13.7L44.2 4.4L55.8 4.4L56.9 13.7L61.4 14.8L65.8 16.5L72.2 9.7L81.5 16.5L77 24.7L79.9 28.3L82.4 32.2L91.6 30.4L95.2 41.4L86.7 45.4L87 50L86.7 54.6L95.2 58.6L91.6 69.6L82.4 67.8L79.9 71.7L77 75.3L81.5 83.5L72.2 90.3L65.8 83.5L61.4 85.2L56.9 86.3L55.8 95.6L44.2 95.6L43.1 86.3L38.6 85.2L34.2 83.5L27.8 90.3L18.5 83.5L23 75.3L20.1 71.7L17.6 67.8L8.4 69.6L4.8 58.6L13.3 54.6L13 50L13.3 45.4L4.8 41.4L8.4 30.4L17.6 32.2L20.1 28.3L23 24.7L18.5 16.5L27.8 9.7L34.2 16.5Z M50 34a16 16 0 1 0 0 32a16 16 0 1 0 0-32Z'/%3E%3C/svg%3E");
   color-scheme: light dark;
   font-family: var(--sans);
   line-height: 1.5;
@@ -40,6 +38,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #12100e;
+    --bg-wash: 82%;
     --surface: #1b1815;
     --sunken: #15120f;
     --text: #f1eadf;
@@ -65,31 +64,18 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--text);
-  background: var(--bg);
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* A large, faint gear watermark in the top-right corner. */
-body::before {
-  content: '';
-  position: absolute;
-  top: -9rem;
-  right: -9rem;
-  width: 26rem;
-  height: 26rem;
-  background: var(--brass);
-  mask: var(--gear) center / contain no-repeat;
-  opacity: 0.07;
-  pointer-events: none;
-  z-index: -1;
-  animation: spin 120s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  /*
+   * Parchment blueprint backdrop, bundled by Vite (CSP img-src 'self').
+   * A wash of the theme background over it keeps text readable and lets
+   * dark mode dim it.
+   */
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--bg) var(--bg-wash), transparent),
+      color-mix(in srgb, var(--bg) var(--bg-wash), transparent)
+    ),
+    url('./assets/bg.webp') center / cover fixed,
+    var(--bg);
 }
 
 /* ---- Header ---- */
@@ -98,28 +84,6 @@ body::before {
   max-width: 64rem;
   margin: 0 auto;
   padding: 1.5rem 1rem 0.75rem;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 1rem;
-  align-items: center;
-}
-
-.site-header::before {
-  content: '';
-  grid-row: span 2;
-  align-self: stretch;
-  aspect-ratio: 1;
-  min-width: 4rem;
-  background: linear-gradient(135deg, var(--brass), var(--copper));
-  mask: var(--gear) center / contain no-repeat;
-  animation: spin 30s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::before,
-  .site-header::before {
-    animation: none;
-  }
 }
 
 h1 {
