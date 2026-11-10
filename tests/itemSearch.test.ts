@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { SearchError, type ItemMatch } from '../src/aon';
-import { MESSAGES, createItemSearch } from '../src/ui/itemSearch';
+import { SearchError, type Catalog, type ItemMatch } from '../src/items';
+import { MESSAGES, createItemSearch, sourceText } from '../src/ui/itemSearch';
 
 const potion: ItemMatch = {
   id: 'p1',
@@ -21,9 +21,12 @@ const sword: ItemMatch = {
   url: null,
 };
 
+const catalog: Catalog = { updated: '2026-11-10', entries: [] };
+
 function setup(
   search = vi.fn().mockResolvedValue([potion, sword]),
   maxLevel = 20,
+  load = vi.fn().mockResolvedValue(catalog),
 ) {
   document.body.replaceChildren();
   const input = document.createElement('input');
@@ -31,19 +34,22 @@ function setup(
   list.id = 'list';
   const status = document.createElement('p');
   const selected = document.createElement('p');
-  document.body.append(input, list, status, selected);
+  const source = document.createElement('p');
+  document.body.append(input, list, status, selected, source);
   const onSelect = vi.fn();
   createItemSearch({
     input,
     list,
     status,
     selected,
+    source,
     onSelect,
     maxLevel: () => maxLevel,
     search,
+    load,
     debounceMs: 0,
   });
-  return { input, list, status, selected, onSelect, search };
+  return { input, list, status, selected, source, onSelect, search, load };
 }
 
 const type = (input: HTMLInputElement, text: string): void => {
@@ -187,5 +193,26 @@ describe('createItemSearch', () => {
     await settle();
     expect(list.children).toHaveLength(1);
     expect(list.textContent).toContain('Longsword');
+  });
+
+  it('loads the item data on first focus and shows its date', async () => {
+    const { input, source, load } = setup();
+    input.dispatchEvent(new Event('focus'));
+    input.dispatchEvent(new Event('focus'));
+    await settle();
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(source.textContent).toBe(sourceText('2026-11-10'));
+  });
+
+  it('keeps the plain credit if the item data fails to load', async () => {
+    const { input, source } = setup(
+      undefined,
+      20,
+      vi.fn().mockRejectedValue(new SearchError('nope')),
+    );
+    source.textContent = MESSAGES.source;
+    input.dispatchEvent(new Event('focus'));
+    await settle();
+    expect(source.textContent).toBe(MESSAGES.source);
   });
 });

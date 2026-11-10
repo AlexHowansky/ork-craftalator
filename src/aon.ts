@@ -1,27 +1,29 @@
 /**
- * Item search against the Archives of Nethys (AoN) Elasticsearch index.
- * This is the app's only network call; the CSP allows just this origin.
+ * Archives of Nethys (AoN) item data: the Elasticsearch query used to fetch
+ * every Craftable item, and validation of what comes back.
+ *
+ * Shared by the browser and `scripts/fetch-items.ts`, which runs under Node
+ * or Bun without a bundler. Keep this module free of DOM, logger and Vite
+ * APIs, and import other modules with explicit `.ts` extensions.
  */
-import { createLogger } from './logger';
-import { MAX_PRICE_CP } from './money';
-import { LIMITS } from './rules/types';
-
-const log = createLogger('aon');
+import { MAX_PRICE_CP } from './money.ts';
+import { LIMITS } from './rules/types.ts';
 
 export const AON_SEARCH_URL = 'https://elasticsearch.aonprd.com/aon/_search';
 export const AON_SITE = 'https://2e.aonprd.com';
 
-/** Shortest search text sent to AoN. */
-export const MIN_QUERY_LENGTH = 2;
-const MAX_QUERY_LENGTH = 100;
-const MAX_RESULTS = 25;
-const TIMEOUT_MS = 8000;
+/** Elasticsearch's default cap on hits returned by one request. */
+export const MAX_HITS = 10_000;
 
 /** Item categories that can be Crafted and carry a Price. */
 const CATEGORIES = ['equipment', 'weapon', 'armor', 'shield'] as const;
 
 /** AoN page paths look like "/Equipment.aspx?ID=2943". */
 const AON_PATH = /^\/[A-Za-z]+\.aspx\?ID=\d+$/;
+
+const MAX_NAME_LENGTH = 200;
+const MAX_ID_LENGTH = 100;
+const RARITIES = ['common', 'uncommon', 'rare', 'unique'] as const;
 
 export interface ItemMatch {
   /** AoN document id, unique per variant (e.g. "equipment-2943-2812"). */
@@ -36,26 +38,27 @@ export interface ItemMatch {
   readonly url: string | null;
 }
 
-export class SearchError extends Error {
-  override readonly name = 'SearchError';
+/** An item as stored in `src/data/items.json`. */
+export interface StoredItem {
+  readonly id: string;
+  readonly name: string;
+  readonly level: number;
+  readonly priceCp: number;
+  readonly rarity: string;
+  readonly legacy: boolean;
+  /** AoN page path, e.g. "/Equipment.aspx?ID=2943", or null. */
+  readonly path: string | null;
 }
 
-/** Build the Elasticsearch request body for a name search. */
-export function buildQuery(text: string): object {
+/** Elasticsearch request body for every Craftable item. */
+export function buildCatalogQuery(): object {
   return {
-    size: MAX_RESULTS,
-    // Best name matches first; equal matches go lowest level first.
-    sort: ['_score', { level: 'asc' }],
+    size: MAX_HITS,
+    track_total_hits: true,
+    sort: [{ level: 'asc' }, '_doc'],
     _source: ['name', 'level', 'price', 'rarity', 'url', 'remaster_id'],
     query: {
       bool: {
-        must: [
-          {
-            match_phrase_prefix: {
-              name: { query: text.trim().slice(0, MAX_QUERY_LENGTH) },
-            },
-          },
-        ],
         filter: [
           { terms: { category: CATEGORIES } },
           { range: { price: { gt: 0, lte: MAX_PRICE_CP } } },
@@ -71,107 +74,112 @@ export function buildQuery(text: string): object {
   };
 }
 
-function isRecord(v: unknown): v is Record<string, unknown> {
+export function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
 
-function toUrl(path: unknown): string | null {
-  return typeof path === 'string' && AON_PATH.test(path)
-    ? AON_SITE + path
-    : null;
+function inRange(v: unknown, min: number, max: number): v is number {
+  return Number.isInteger(v) && (v as number) >= min && (v as number) <= max;
 }
 
-/** Validate one search hit; returns null for anything unusable. */
-function parseHit(hit: unknown): ItemMatch | null {
-  if (!isRecord(hit) || !isRecord(hit['_source'])) return null;
-  const id = hit['_id'];
-  const src = hit['_source'];
-  const { name, level, price, rarity } = src;
-  if (typeof id !== 'string' || typeof name !== 'string') return null;
-  if (name.trim() === '') return null;
-  if (
-    !Number.isInteger(level) ||
-    (level as number) < LIMITS.itemLevel.min ||
-    (level as number) > LIMITS.itemLevel.max
-  ) {
+function validPath(path: unknown): string | null {
+  return typeof path === 'string' && AON_PATH.test(path) ? path : null;
+}
+
+/** Validate an item's fields; returns null for anything unusable. */
+export function toStoredItem(fields: {
+  id: unknown;
+  name: unknown;
+  level: unknown;
+  priceCp: unknown;
+  rarity: unknown;
+  legacy: boolean;
+  path: unknown;
+}): StoredItem | null {
+  const { id, name, level, priceCp, rarity, legacy, path } = fields;
+  if (typeof id !== 'string' || id === '' || id.length > MAX_ID_LENGTH) {
     return null;
   }
-  if (
-    !Number.isInteger(price) ||
-    (price as number) <= 0 ||
-    (price as number) > MAX_PRICE_CP
-  ) {
+  if (typeof name !== 'string') return null;
+  const trimmed = name.trim();
+  if (trimmed === '' || trimmed.length > MAX_NAME_LENGTH) return null;
+  if (!inRange(level, LIMITS.itemLevel.min, LIMITS.itemLevel.max)) {
     return null;
   }
-  const remasterId = src['remaster_id'];
+  if (!inRange(priceCp, 1, MAX_PRICE_CP)) return null;
   return {
     id,
-    name: name.trim(),
-    level: level as number,
-    priceCp: price as number,
-    rarity: typeof rarity === 'string' ? rarity : 'common',
-    legacy: Array.isArray(remasterId) && remasterId.length > 0,
-    url: toUrl(src['url']),
+    name: trimmed,
+    level,
+    priceCp,
+    rarity: (RARITIES as readonly unknown[]).includes(rarity)
+      ? (rarity as string)
+      : 'common',
+    legacy,
+    path: validPath(path),
   };
 }
 
-/** Turn an Elasticsearch response into item matches, skipping bad hits. */
-export function parseResponse(json: unknown): ItemMatch[] {
+/** Validate one Elasticsearch hit; returns null for anything unusable. */
+export function parseHit(hit: unknown): StoredItem | null {
+  if (!isRecord(hit) || !isRecord(hit['_source'])) return null;
+  const src = hit['_source'];
+  const remasterId = src['remaster_id'];
+  return toStoredItem({
+    id: hit['_id'],
+    name: src['name'],
+    level: src['level'],
+    priceCp: src['price'],
+    rarity: src['rarity'],
+    legacy: Array.isArray(remasterId) && remasterId.length > 0,
+    path: src['url'],
+  });
+}
+
+/** Validate one entry of `src/data/items.json`. */
+export function parseStoredItem(v: unknown): StoredItem | null {
+  if (!isRecord(v)) return null;
+  return toStoredItem({
+    id: v['id'],
+    name: v['name'],
+    level: v['level'],
+    priceCp: v['priceCp'],
+    rarity: v['rarity'],
+    legacy: v['legacy'] === true,
+    path: v['path'],
+  });
+}
+
+export function toItemMatch(item: StoredItem): ItemMatch {
+  const { path, ...rest } = item;
+  return { ...rest, url: path === null ? null : AON_SITE + path };
+}
+
+/**
+ * Turn an Elasticsearch response into stored items, skipping bad hits and
+ * duplicate ids. Throws if the response isn't shaped like a search result.
+ */
+export function parseResponse(json: unknown): {
+  total: number | null;
+  items: StoredItem[];
+} {
   if (!isRecord(json) || !isRecord(json['hits'])) {
-    throw new SearchError('Unexpected search response');
+    throw new Error('Unexpected search response');
   }
-  const hits = json['hits']['hits'];
-  if (!Array.isArray(hits)) throw new SearchError('Unexpected search response');
+  const { hits, total } = json['hits'];
+  if (!Array.isArray(hits)) throw new Error('Unexpected search response');
   const seen = new Set<string>();
-  const out: ItemMatch[] = [];
+  const items: StoredItem[] = [];
   for (const hit of hits) {
     const item = parseHit(hit);
     if (item && !seen.has(item.id)) {
       seen.add(item.id);
-      out.push(item);
+      items.push(item);
     }
   }
-  return out;
-}
-
-/**
- * Search AoN for Craftable items whose name starts with the text.
- * Rejects with SearchError on network, HTTP or format failures, or with
- * the abort reason if the caller's signal is aborted.
- */
-export async function searchItems(
-  text: string,
-  signal?: AbortSignal,
-): Promise<ItemMatch[]> {
-  const signals = [AbortSignal.timeout(TIMEOUT_MS)];
-  if (signal) signals.push(signal);
-  let res: Response;
-  try {
-    res = await fetch(AON_SEARCH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(buildQuery(text)),
-      credentials: 'omit',
-      referrerPolicy: 'no-referrer',
-      signal: AbortSignal.any(signals),
-    });
-  } catch (err) {
-    if (signal?.aborted) throw err;
-    log.warn('Search request failed', err);
-    throw new SearchError('Search request failed', { cause: err });
-  }
-  if (!res.ok) {
-    log.warn(`Search returned HTTP ${res.status}`);
-    throw new SearchError(`HTTP ${res.status}`);
-  }
-  let json: unknown;
-  try {
-    json = await res.json();
-  } catch (err) {
-    if (signal?.aborted) throw err;
-    throw new SearchError('Search response was not JSON', { cause: err });
-  }
-  const items = parseResponse(json);
-  log.debug(`Search "${text}": ${items.length} matches`);
-  return items;
+  const count = isRecord(total) ? total['value'] : undefined;
+  return {
+    total: Number.isInteger(count) ? (count as number) : null,
+    items,
+  };
 }

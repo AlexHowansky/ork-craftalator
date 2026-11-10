@@ -1,13 +1,15 @@
 /**
  * Item search box with autocomplete (ARIA combobox + listbox). Matches come
- * from Archives of Nethys; picking one hands the item to onSelect.
+ * from the bundled Archives of Nethys item data; picking one hands the item
+ * to onSelect.
  */
 import {
   MIN_QUERY_LENGTH,
   SearchError,
+  loadCatalog,
   searchItems,
   type ItemMatch,
-} from '../aon';
+} from '../items';
 import { createLogger } from '../logger';
 import { formatCp } from '../money';
 
@@ -16,24 +18,35 @@ const log = createLogger('itemSearch');
 const DEBOUNCE_MS = 250;
 
 export const MESSAGES = Object.freeze({
-  searching: 'Searching Archives of Nethys…',
+  searching: 'Searching…',
   none: 'No Craftable items match that name.',
   unavailable:
     'Item search is unavailable right now. You can still enter the ' +
     'item level and Price by hand.',
+  source: 'Item data from Archives of Nethys.',
 });
+
+/** Credit line naming the data source and snapshot date. */
+export function sourceText(updated: string | null): string {
+  return updated
+    ? `Item data from Archives of Nethys, updated ${updated}.`
+    : MESSAGES.source;
+}
 
 export interface ItemSearchOptions {
   readonly input: HTMLInputElement;
   readonly list: HTMLUListElement;
   readonly status: HTMLElement;
   readonly selected: HTMLElement;
+  /** Shows where the item data comes from and how current it is. */
+  readonly source?: HTMLElement;
   /** Apply the chosen item. */
   readonly onSelect: (item: ItemMatch) => void;
   /** Highest item level the crafter can Craft; higher items are ghosted. */
   readonly maxLevel: () => number;
   /** Injected for tests. */
   readonly search?: typeof searchItems;
+  readonly load?: typeof loadCatalog;
   readonly debounceMs?: number;
 }
 
@@ -53,6 +66,7 @@ function describe(item: ItemMatch, tooHigh: boolean): string {
 export function createItemSearch(opts: ItemSearchOptions): ItemSearch {
   const { input, list, status, selected, onSelect, maxLevel } = opts;
   const search = opts.search ?? searchItems;
+  const load = opts.load ?? loadCatalog;
   const debounceMs = opts.debounceMs ?? DEBOUNCE_MS;
 
   let items: ItemMatch[] = [];
@@ -248,6 +262,23 @@ export function createItemSearch(opts: ItemSearchOptions): ItemSearch {
   });
 
   input.addEventListener('blur', closeList);
+
+  // Start loading the item data as soon as the box is focused, so the first
+  // search is quick, and show the snapshot date once it's known. Failures
+  // are reported when a search runs.
+  input.addEventListener(
+    'focus',
+    () => {
+      load().then(
+        (catalog) => {
+          if (opts.source)
+            opts.source.textContent = sourceText(catalog.updated);
+        },
+        () => undefined,
+      );
+    },
+    { once: true },
+  );
 
   // Keep focus in the box so blur doesn't close the list before a click.
   list.addEventListener('mousedown', (e) => e.preventDefault());

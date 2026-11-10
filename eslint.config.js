@@ -27,4 +27,10 @@ export default tseslint.config(
     files: ['src/logger.ts'],
     rules: { 'no-console': 'off' },
   },
+  {
+    // Build-time tools run under Node or Bun, not in the browser.
+    files: ['scripts/**'],
+    languageOptions: { globals: globals.node },
+    rules: { 'no-console': 'off' },
+  },
 );

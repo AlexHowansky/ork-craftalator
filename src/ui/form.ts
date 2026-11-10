@@ -182,6 +182,7 @@ export function initForm(): void {
     list: byId('item-search-list', HTMLUListElement),
     status: byId('item-search-status', HTMLElement),
     selected: byId('item-search-selected', HTMLElement),
+    source: byId('item-search-source', HTMLElement),
     maxLevel: () => maxItemLevel(characterLevel.value, currentProficiency()),
     onSelect: (item) => {
       price.value = formatCp(item.priceCp);

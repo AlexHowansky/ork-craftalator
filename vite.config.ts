@@ -4,8 +4,8 @@ import { defineConfig, type Plugin } from 'vitest/config';
  * Strict Content Security Policy, added to production builds only (the dev
  * server needs inline styles and a websocket for hot reload).
  * frame-ancestors can't be set from a meta tag; set it as a header if the
- * hosting allows. connect-src allows only the Archives of Nethys search
- * API used by the item search.
+ * hosting allows. The app makes no network requests at runtime: item data
+ * is bundled, so connect-src falls back to default-src 'none'.
  */
 const CSP = [
   "default-src 'none'",
@@ -13,7 +13,6 @@ const CSP = [
   "style-src 'self'",
   "img-src 'self' data:",
   "font-src 'self'",
-  'connect-src https://elasticsearch.aonprd.com',
   "base-uri 'none'",
   "form-action 'none'",
 ].join('; ');
@@ -37,6 +36,9 @@ export default defineConfig({
   plugins: [cspPlugin()],
   build: {
     sourcemap: true,
+    // The bundled item data (src/data/items.json, ~1 MB, ~130 kB gzipped)
+    // is its own lazily loaded chunk, so its size doesn't delay start-up.
+    chunkSizeWarningLimit: 1500,
   },
   test: {
     environment: 'jsdom',
