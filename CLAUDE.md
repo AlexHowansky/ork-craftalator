@@ -30,6 +30,10 @@ The product specification (terms and features) is in @SPEC.md.
   Bun, run tests as `bun run test`; `bun test` starts Bun's own test
   runner instead of Vitest.
 
+* CI (`.github/workflows/deploy.yml`) installs with Bun from `bun.lock`.
+  Keep `package-lock.json` in sync as well: after any dependency change,
+  run both `bun install` and `npm install` and commit both lockfiles.
+
 * No local storage is used; the app is stateless.
 
 * Logging: use `src/logger.ts` (`debug`, `info`, `warn`, `error`), never
