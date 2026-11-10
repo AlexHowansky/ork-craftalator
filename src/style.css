@@ -9,7 +9,6 @@
   --surface: #fffdf9;
   --sunken: #f1ebe1;
   --text: #221a12;
-  --muted: #6d6152;
   --border: #e4d9c8;
   --brass: #b07d2c;
   --brass-text: #8a5c16;
@@ -54,7 +53,6 @@
     --surface: #1b1815;
     --sunken: #15120f;
     --text: #f1eadf;
-    --muted: #a59886;
     --border: #2f2924;
     --brass: #d3a253;
     --brass-text: #ddb066;
@@ -132,7 +130,7 @@ h3 {
 .tagline,
 .hint {
   margin: 0.35rem 0 0;
-  color: var(--muted);
+  color: var(--text);
   font-size: 0.875rem;
 }
 
@@ -484,7 +482,7 @@ input[aria-invalid='true']:focus-visible {
 }
 
 .option-meta {
-  color: var(--muted);
+  color: var(--text);
   font-size: 0.8rem;
   margin-top: -0.25rem;
   padding-left: 0.5rem;
@@ -515,7 +513,7 @@ input[aria-invalid='true']:focus-visible {
 }
 
 .summary dt {
-  color: var(--muted);
+  color: var(--text);
   font-size: 0.75rem;
   font-weight: 500;
 }
@@ -580,7 +578,7 @@ input[aria-invalid='true']:focus-visible {
   flex-wrap: wrap;
   gap: 0.35rem 1.1rem;
   font-size: 0.85rem;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .odds-list li {
@@ -623,12 +621,12 @@ input[aria-invalid='true']:focus-visible {
 .degrees thead th {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .degrees tbody th {
   font-weight: 400;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .degrees tbody tr:last-child > * {

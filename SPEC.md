@@ -86,7 +86,9 @@ Pathfinder 2nd edition role playing system.
   grooved track, brass to the left of the thumb and white to the
   right). The title and panel headers use New Rocker, a hammered
   blackletter display face; other headings and key figures use a serif;
-  body text uses the system sans-serif. Light and dark modes follow the
+  body text uses the system sans-serif. All text uses the full text
+  colour (black on light paper), never a muted grey, so it stays
+  readable on the textured paper. Light and dark modes follow the
   system.
 
 * Layout: three panels. Crafter holds, in order, the rules version,
