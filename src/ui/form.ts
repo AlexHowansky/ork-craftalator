@@ -3,6 +3,7 @@ import { createLogger } from '../logger';
 import { formatCp, parsePrice } from '../money';
 import {
   calculate,
+  formulaPrice,
   impeccableAllowed,
   itemLevelLimitReason,
   maxItemLevel,
@@ -55,6 +56,7 @@ export function initForm(): void {
   const rulesVersion = byId('rules-version', HTMLSelectElement);
   const proficiency = byId('proficiency', HTMLSelectElement);
   const hasFormula = byId('has-formula', HTMLInputElement);
+  const formulaHint = byId('has-formula-hint', HTMLElement);
   const hasSpecialty = byId('has-specialty', HTMLInputElement);
   const hasImpeccable = byId('has-impeccable', HTMLInputElement);
   const rarity = byId('rarity', HTMLSelectElement);
@@ -120,7 +122,15 @@ export function initForm(): void {
   applyItemLevelCap();
   applyImpeccableRequirements();
 
+  /** Show the Formula Price for the current item level. */
+  function updateFormulaHint(): void {
+    const level = itemLevel.value;
+    const cost = formatCp(formulaPrice(level));
+    formulaHint.textContent = `Cost for a level ${level} item formula is ${cost}.`;
+  }
+
   function recalc(): void {
+    updateFormulaHint();
     const parsed = parsePrice(price.value);
     if (!parsed.ok) {
       setError(priceError, parsed.error);

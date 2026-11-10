@@ -14,7 +14,8 @@ Pathfinder 2nd edition role playing system.
     Core) and Legacy (Core Rulebook). Defaults to Remaster.
 
   * Formula. Implemented as a checkbox: whether the crafter has the item's
-    formula.
+    formula. A note under it gives the Formula Price for the current item
+    level: "Cost for a level <level> item is <amount>."
 
   * Specialty Crafting. Implemented as a checkbox: whether the crafter has
     the Specialty Crafting feat for this kind of item.
@@ -113,6 +114,12 @@ Pathfinder 2nd edition role playing system.
 
   * Remaster: 2 days, or 1 day with the formula.
   * Legacy: 4 days, or 2 days with the formula.
+
+* Formula Price (Player Core / Core Rulebook), by item level: 0: 5 sp,
+  1: 1 gp, 2: 2 gp, 3: 3 gp, 4: 5 gp, 5: 8 gp, 6: 13 gp, 7: 18 gp,
+  8: 25 gp, 9: 35 gp, 10: 50 gp, 11: 70 gp, 12: 100 gp, 13: 150 gp,
+  14: 225 gp, 15: 325 gp, 16: 500 gp, 17: 750 gp, 18: 1,200 gp,
+  19: 2,000 gp, 20: 3,500 gp.
 
 * Crafting check DC: the DCs by Level table for the item level, adjusted
   for rarity: uncommon +2, rare +5, unique +10. The app shows the chance of each degree of success using

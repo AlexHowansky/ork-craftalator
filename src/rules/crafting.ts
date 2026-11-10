@@ -1,5 +1,6 @@
 /** Pure PF2e Craft activity calculations. All money is in copper. */
 import { DC_BY_LEVEL } from '../data/dcByLevel';
+import { FORMULA_PRICE } from '../data/formulaPrice';
 import { INCOME_EARNED, INCOME_MAX_INDEX } from '../data/incomeTable';
 import type {
   CraftingInputs,
@@ -18,6 +19,14 @@ function clampInt(value: number, min: number, max: number): number {
 export function setupDays(version: RulesVersion, hasFormula: boolean): number {
   if (version === 'legacy') return hasFormula ? 2 : 4;
   return hasFormula ? 1 : 2;
+}
+
+/** Price of buying the formula for an item of this level. */
+export function formulaPrice(itemLevel: number): number {
+  const level = clampInt(itemLevel, 0, FORMULA_PRICE.length - 1);
+  const cp = FORMULA_PRICE[level];
+  if (cp === undefined) throw new RangeError(`No formula Price for ${level}`);
+  return cp;
 }
 
 /** Raw materials spent up front: half the Price, rounded up. */

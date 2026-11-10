@@ -179,9 +179,16 @@
             </p>
           </div>
 
-          <div class="field checkbox-field">
-            <input id="has-formula" type="checkbox" />
-            <label for="has-formula">I have the item's formula</label>
+          <div class="field">
+            <div class="checkbox-field">
+              <input
+                id="has-formula"
+                type="checkbox"
+                aria-describedby="has-formula-hint"
+              />
+              <label for="has-formula">I have the item's formula</label>
+            </div>
+            <p id="has-formula-hint" class="hint" aria-live="polite"></p>
           </div>
 
           <div class="field">

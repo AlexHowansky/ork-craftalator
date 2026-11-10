@@ -5,6 +5,7 @@ import {
   checkOdds,
   craftDc,
   dailyReduction,
+  formulaPrice,
   maxAdditionalDays,
   itemLevelLimitReason,
   maxItemLevel,
@@ -38,6 +39,23 @@ describe('setupDays', () => {
     ['legacy', true, 2],
   ] as const)('%s formula=%s -> %d', (v, f, d) => {
     expect(setupDays(v, f)).toBe(d);
+  });
+});
+
+describe('formulaPrice', () => {
+  it.each([
+    [0, 50],
+    [1, 100],
+    [5, 800],
+    [14, 22_500],
+    [20, 350_000],
+  ])('level %d -> %d cp', (level, cp) => {
+    expect(formulaPrice(level)).toBe(cp);
+  });
+
+  it('clamps out-of-range levels', () => {
+    expect(formulaPrice(-3)).toBe(50);
+    expect(formulaPrice(25)).toBe(350_000);
   });
 });
 
