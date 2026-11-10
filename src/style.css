@@ -294,6 +294,68 @@ input[aria-invalid='true']:focus-visible {
   margin: 0.35rem 0 0;
 }
 
+/* ---- Item search (combobox) ---- */
+
+.combobox {
+  position: relative;
+}
+
+.listbox {
+  position: absolute;
+  z-index: 10;
+  inset: calc(100% + 4px) 0 auto;
+  max-height: 18rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.listbox [role='option'] {
+  display: flex;
+  flex-direction: column;
+  padding: 0rem 0.3rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.listbox [role='option']:hover,
+.listbox [role='option'][aria-selected='true'] {
+  background: color-mix(in srgb, var(--brass) 18%, var(--surface));
+}
+
+.listbox [role='option'][aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.listbox [role='option'][aria-disabled='true']:hover {
+  background: none;
+}
+
+.option-name {
+  font-weight: 600;
+}
+
+.option-meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: -0.25rem;
+  padding-left: 0.5rem;
+}
+
+#item-search-status:empty {
+  display: none;
+}
+
+#item-search-selected a {
+  color: var(--accent);
+}
+
 /* ---- Summary tiles ---- */
 
 .summary {

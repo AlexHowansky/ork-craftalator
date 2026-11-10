@@ -1,6 +1,6 @@
 /** Binds the input form to the calculator and the results panel. */
 import { createLogger } from '../logger';
-import { parsePrice } from '../money';
+import { formatCp, parsePrice } from '../money';
 import {
   calculate,
   impeccableAllowed,
@@ -15,6 +15,7 @@ import {
   type RulesVersion,
 } from '../rules/types';
 import { byId, setError } from './dom';
+import { createItemSearch } from './itemSearch';
 import { createRangeInput, type RangeInput } from './rangeInput';
 import { clearResult, renderResult } from './results';
 
@@ -175,6 +176,19 @@ export function initForm(): void {
     update();
   });
   price.addEventListener('input', update);
+
+  createItemSearch({
+    input: byId('item-search', HTMLInputElement),
+    list: byId('item-search-list', HTMLUListElement),
+    status: byId('item-search-status', HTMLElement),
+    selected: byId('item-search-selected', HTMLElement),
+    maxLevel: () => maxItemLevel(characterLevel.value, currentProficiency()),
+    onSelect: (item) => {
+      price.value = formatCp(item.priceCp);
+      itemLevel.setValue(item.level);
+      update();
+    },
+  });
   // The form has no submit action; keep Enter from reloading the page.
   byId('inputs', HTMLFormElement).addEventListener('submit', (e) => {
     e.preventDefault();

@@ -66,3 +66,19 @@ describe('createRangeInput', () => {
     expect(onChange).toHaveBeenCalledWith(2);
   });
 });
+
+describe('setValue', () => {
+  it('sets, clamps and notifies', () => {
+    const { text, slider, onChange, r } = setup(0, 10, '5');
+    r.setValue(7);
+    expect(r.value).toBe(7);
+    expect(text.value).toBe('7');
+    expect(slider.value).toBe('7');
+    expect(onChange).toHaveBeenCalledWith(7);
+    r.setValue(50);
+    expect(r.value).toBe(10);
+    onChange.mockClear();
+    r.setValue(10);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});

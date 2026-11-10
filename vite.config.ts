@@ -4,14 +4,15 @@ import { defineConfig, type Plugin } from 'vitest/config';
  * Strict Content Security Policy, added to production builds only (the dev
  * server needs inline styles and a websocket for hot reload).
  * frame-ancestors can't be set from a meta tag; set it as a header if the
- * hosting allows.
+ * hosting allows. connect-src allows only the Archives of Nethys search
+ * API used by the item search.
  */
 const CSP = [
   "default-src 'none'",
   "script-src 'self'",
   "style-src 'self'",
   "img-src 'self' data:",
-  "connect-src 'none'",
+  'connect-src https://elasticsearch.aonprd.com',
   "base-uri 'none'",
   "form-action 'none'",
 ].join('; ');

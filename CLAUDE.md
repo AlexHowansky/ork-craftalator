@@ -16,6 +16,7 @@ The product specification (terms and features) is in @SPEC.md.
   * `index.html` - page shell and Content Security Policy.
   * `src/data/` - rules tables (Income Earned, DCs by Level).
   * `src/rules/` - pure crafting calculations, no DOM access.
+  * `src/aon.ts` - Archives of Nethys item search client.
   * `src/money.ts` - money parsing and formatting. All money is handled as
     integer copper pieces, never floats.
   * `src/logger.ts` - the only logging entry point.
@@ -49,6 +50,14 @@ The product specification (terms and features) is in @SPEC.md.
 
 * The app should be completely client-side. It should not require any server
   interactions beyond the initial file loading.
+
+  The one exception is the item search, which queries the Archives of
+  Nethys Elasticsearch API (`https://elasticsearch.aonprd.com/aon/_search`)
+  from the browser. The production CSP allows `connect-src` to that origin
+  only. AoN controls which origins its CORS allows; when a request is
+  refused, the search shows a friendly message and the rest of the app
+  works without it. Treat AoN responses as untrusted: validate every
+  field and only link to AoN page paths.
 
 * If local storage is needed, prompt me for the engine to use.
 

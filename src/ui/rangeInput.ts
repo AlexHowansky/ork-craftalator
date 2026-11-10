@@ -21,6 +21,8 @@ export interface RangeInputOptions {
 export interface RangeInput {
   readonly value: number;
   setMax(max: number): void;
+  /** Set the value, clamped to the range; fires onChange if it changed. */
+  setValue(value: number): void;
 }
 
 const INTEGER = /^\s*-?\d+\s*$/;
@@ -99,6 +101,17 @@ export function createRangeInput(opts: RangeInputOptions): RangeInput {
         log.debug(`${label}: clamped to ${value} (max now ${max})`);
         onChange(value);
       }
+    },
+    setValue(next: number) {
+      const clamped = clamp(Math.trunc(next));
+      if (clamped === value) {
+        render();
+        return;
+      }
+      log.debug(`${label}: ${value} -> ${clamped} (set)`);
+      value = clamped;
+      render();
+      onChange(value);
     },
   };
 }

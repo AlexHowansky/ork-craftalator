@@ -35,6 +35,22 @@ Pathfinder 2nd edition role playing system.
     The user can type a value or use the slider to adjust within the allowed
     range. Values are 1 - 20.
 
+  * Item search. Implemented as a text box with autocomplete. Typing at
+    least 2 characters searches Archives of Nethys (AoN) for Craftable
+    items (equipment, weapons, armor and shields priced above 0, level
+    0 - 20) whose name starts with the text. Matches are shown in a list,
+    best name match first and equally good matches by item level (lowest
+    first), with their level, Price and, when not common, rarity; Legacy
+    items that have a Remaster version are marked Legacy. Choosing a
+    match (mouse or arrow keys and Enter) fills in the item level and the item
+    Price and recalculates everything, including the Crafting DC and
+    initial cost. A link to the item's AoN page is then shown.
+    Matches above the highest level the crafter can Craft (see Item level
+    limit) are shown ghosted, marked too high to Craft, and can't be
+    chosen; the arrow keys skip them. If AoN can't be reached,
+    a message says so and the level and Price can still be entered by
+    hand.
+
   * Item level of the thing being crafted. Implemented as a text box with a
     slider. The user can type a value or use the slider to adjust within the
     allowed range. Values are 0 - the highest level the crafter may Craft

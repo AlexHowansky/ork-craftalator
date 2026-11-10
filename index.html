@@ -85,6 +85,39 @@
           <p id="character-level-error" class="error" role="alert" hidden></p>
         </div>
 
+        <div class="field item-search">
+          <label for="item-search">Find an item</label>
+          <div class="combobox">
+            <input
+              id="item-search"
+              type="text"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded="false"
+              aria-controls="item-search-list"
+              aria-describedby="item-search-status"
+              autocomplete="off"
+              spellcheck="false"
+              maxlength="100"
+              placeholder="e.g. healing potion"
+            />
+            <ul
+              id="item-search-list"
+              class="listbox"
+              role="listbox"
+              aria-label="Matching items"
+              hidden
+            ></ul>
+          </div>
+          <p id="item-search-status" class="hint" aria-live="polite"></p>
+          <p
+            id="item-search-selected"
+            class="hint"
+            aria-live="polite"
+            hidden
+          ></p>
+        </div>
+
         <div class="field range-field" data-range="item-level">
           <label for="item-level">Item level</label>
           <div class="range-row">
