@@ -87,8 +87,8 @@ Pathfinder 2nd edition role playing system.
   and key figures use a serif; body text uses the system sans-serif. Light and
   dark modes follow the system.
 
-* Layout: three panels. Crafter holds the rules version, Crafting
-  proficiency, Crafting bonus and character level. Item holds the item
+* Layout: three panels. Crafter holds, in order, the rules version,
+  character level, Crafting proficiency and Crafting bonus. Item holds the item
   search, item level, item Price and the formula, Specialty Crafting and
   Impeccable Crafting checkboxes. Results holds the outputs and the
   additional days spent. On a wide screen the three sit side by side and
