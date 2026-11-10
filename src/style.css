@@ -1,0 +1,285 @@
+:root {
+  --bg: #f6f3ee;
+  --panel: #ffffff;
+  --text: #1f1b16;
+  --muted: #5f574d;
+  --border: #ddd5c9;
+  --accent: #8a3b12;
+  --error: #b00020;
+  --cs: #2e7d32;
+  --s: #7cb342;
+  --f: #f9a825;
+  --cf: #c62828;
+  --radius: 10px;
+  color-scheme: light dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1714;
+    --panel: #24201c;
+    --text: #efe9e1;
+    --muted: #b3a999;
+    --border: #3d362f;
+    --accent: #f0a070;
+    --error: #ff8a80;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.site-header {
+  padding: 1.5rem 1rem 0.5rem;
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: var(--accent);
+}
+
+h2 {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+}
+
+h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.tagline,
+.hint {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 52rem) {
+  .layout {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: start;
+  }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field > label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+input[type='text'],
+select {
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  width: 100%;
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--error);
+  outline-color: var(--error);
+}
+
+.range-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.range-row input[type='text'] {
+  width: 4.5rem;
+  flex: none;
+  text-align: right;
+}
+
+.range-row input[type='range'] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.checkbox-field {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.checkbox-field input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+}
+
+.error {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
+.summary div {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+}
+
+.summary dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.summary dd {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.odds {
+  margin-bottom: 1.25rem;
+}
+
+.odds-bar {
+  display: flex;
+  height: 0.75rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.odds-bar span {
+  flex: 0 0 0;
+  transition: flex-grow 0.2s ease;
+}
+
+.odds-bar .cs,
+.odds-list .cs::before {
+  background: var(--cs);
+}
+.odds-bar .s,
+.odds-list .s::before {
+  background: var(--s);
+}
+.odds-bar .f,
+.odds-list .f::before {
+  background: var(--f);
+}
+.odds-bar .cf,
+.odds-list .cf::before {
+  background: var(--cf);
+}
+
+.odds-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: 0.875rem;
+}
+
+.odds-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.odds-list li::before {
+  content: '';
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+}
+
+.degrees {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.degrees th,
+.degrees td {
+  text-align: left;
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.degrees thead th {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.degrees tbody th {
+  font-weight: 500;
+}
+
+.degrees td {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.fatal {
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--error);
+  color: var(--error);
+  border-radius: var(--radius);
+}

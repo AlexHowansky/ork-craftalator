@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      name="description"
+      content="Calculate the time and cost of the Pathfinder 2e Craft activity."
+    />
+    <title>Craftalator</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Craftalator</h1>
+      <p class="tagline">
+        Time and cost of the Pathfinder 2e Craft downtime activity
+      </p>
+    </header>
+
+    <main class="layout">
+      <form id="inputs" class="panel" novalidate aria-labelledby="inputs-h">
+        <h2 id="inputs-h">Crafter &amp; item</h2>
+
+        <div class="field">
+          <label for="rules-version">Rules version</label>
+          <select id="rules-version">
+            <option value="remaster" selected>Remaster (Player Core)</option>
+            <option value="legacy">Legacy (Core Rulebook)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="proficiency">Crafting proficiency</label>
+          <select id="proficiency">
+            <option value="trained" selected>Trained</option>
+            <option value="expert">Expert</option>
+            <option value="master">Master</option>
+            <option value="legendary">Legendary</option>
+          </select>
+        </div>
+
+        <div class="field range-field" data-range="bonus">
+          <label for="bonus">Crafting bonus</label>
+          <div class="range-row">
+            <input
+              id="bonus"
+              type="text"
+              inputmode="numeric"
+              value="5"
+              aria-describedby="bonus-error"
+            />
+            <input
+              id="bonus-slider"
+              type="range"
+              min="0"
+              max="40"
+              value="5"
+              aria-label="Crafting bonus slider"
+            />
+          </div>
+          <p id="bonus-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <div class="field range-field" data-range="character-level">
+          <label for="character-level">Character level</label>
+          <div class="range-row">
+            <input
+              id="character-level"
+              type="text"
+              inputmode="numeric"
+              value="1"
+              aria-describedby="character-level-error"
+            />
+            <input
+              id="character-level-slider"
+              type="range"
+              min="1"
+              max="20"
+              value="1"
+              aria-label="Character level slider"
+            />
+          </div>
+          <p id="character-level-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <div class="field range-field" data-range="item-level">
+          <label for="item-level">Item level</label>
+          <div class="range-row">
+            <input
+              id="item-level"
+              type="text"
+              inputmode="numeric"
+              value="1"
+              aria-describedby="item-level-limit item-level-error"
+            />
+            <input
+              id="item-level-slider"
+              type="range"
+              min="0"
+              max="1"
+              value="1"
+              aria-label="Item level slider"
+            />
+          </div>
+          <p id="item-level-limit" class="hint" aria-live="polite" hidden></p>
+          <p id="item-level-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="price">Item Price</label>
+          <input
+            id="price"
+            type="text"
+            value="20 gp"
+            autocomplete="off"
+            spellcheck="false"
+            maxlength="100"
+            aria-describedby="price-hint price-error"
+          />
+          <p id="price-hint" class="hint">
+            e.g. 15 gp, 3 gp 5 sp, 40 cp. A bare number is gold.
+          </p>
+          <p id="price-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <div class="field checkbox-field">
+          <input id="has-formula" type="checkbox" />
+          <label for="has-formula">I have the item's formula</label>
+        </div>
+      </form>
+
+      <section class="panel results" aria-labelledby="results-h">
+        <h2 id="results-h">Results</h2>
+
+        <dl class="summary">
+          <div>
+            <dt>Initial cost</dt>
+            <dd id="out-upfront">-</dd>
+          </div>
+          <div>
+            <dt>Setup time</dt>
+            <dd id="out-setup">-</dd>
+          </div>
+          <div>
+            <dt>Crafting DC</dt>
+            <dd id="out-dc">-</dd>
+          </div>
+          <div>
+            <dt>Remaining cost</dt>
+            <dd id="out-remaining">-</dd>
+          </div>
+        </dl>
+
+        <div class="odds" aria-labelledby="odds-h">
+          <h3 id="odds-h">Check odds</h3>
+          <div id="odds-bar" class="odds-bar" aria-hidden="true">
+            <span class="cs"></span><span class="s"></span>
+            <span class="f"></span><span class="cf"></span>
+          </div>
+          <ul id="odds-list" class="odds-list"></ul>
+        </div>
+
+        <div class="field range-field" data-range="days">
+          <label for="days">Additional days spent</label>
+          <div class="range-row">
+            <input
+              id="days"
+              type="text"
+              inputmode="numeric"
+              value="0"
+              aria-describedby="days-error"
+            />
+            <input
+              id="days-slider"
+              type="range"
+              min="0"
+              max="0"
+              value="0"
+              aria-label="Additional days slider"
+            />
+          </div>
+          <p id="days-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <table class="degrees" aria-live="polite">
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Value</span></th>
+              <th scope="col">Success</th>
+              <th scope="col">Critical success</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Cost reduction per day</th>
+              <td id="s-per-day">-</td>
+              <td id="cs-per-day">-</td>
+            </tr>
+            <tr>
+              <th scope="row">Additional days to finish</th>
+              <td id="s-max-days">-</td>
+              <td id="cs-max-days">-</td>
+            </tr>
+            <tr>
+              <th scope="row">Days required (with setup)</th>
+              <td id="s-req-days">-</td>
+              <td id="cs-req-days">-</td>
+            </tr>
+            <tr>
+              <th scope="row">Cost to finish now</th>
+              <td id="s-add-cost">-</td>
+              <td id="cs-add-cost">-</td>
+            </tr>
+            <tr>
+              <th scope="row">Total cost</th>
+              <td id="s-total-cost">-</td>
+              <td id="cs-total-cost">-</td>
+            </tr>
+            <tr>
+              <th scope="row">Total days spent</th>
+              <td id="s-total-days">-</td>
+              <td id="cs-total-days">-</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="hint">
+          "Cost to finish now" is what you still pay in materials after the
+          additional days chosen above. On a failure you salvage all the
+          materials; on a critical failure you lose 10% of them.
+        </p>
+      </section>
+    </main>
+
+    <noscript>This calculator needs JavaScript to run.</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
