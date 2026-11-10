@@ -70,14 +70,15 @@ Pathfinder 2nd edition role playing system.
   required, and the additional monetary expenditure required given the
   position of the additional days spent slider.
 
-* Appearance: a modern steampunk theme. Flat warm surfaces with hairline
-  borders and rounded corners over a fixed parchment blueprint backdrop,
-  softened by a wash of the page colour (heavier in dark mode) so text
-  stays readable; brass and copper are used as accents (a
-  brass-to-copper strip atop each panel, brass sliders and focus
-  rings). The title and panel headers use New Rocker, a hammered
-  blackletter display face; other headings and key
-  figures use a serif; body text uses the system sans-serif. Light and
+* Appearance: a modern steampunk theme over a fixed parchment blueprint
+  backdrop, softened by a wash of the page colour (heavier in dark mode)
+  so text stays readable. Each panel looks like a sheet of old paper:
+  fibre grain and mottling, a couple of age stains (placed differently
+  per panel), edges darkened as if aged and slightly uneven corners. In
+  dark mode the paper is a dim, aged brown. Brass and copper are used as
+  accents (brass sliders and focus rings). The title and panel headers
+  use New Rocker, a hammered blackletter display face; other headings
+  and key figures use a serif; body text uses the system sans-serif. Light and
   dark modes follow the system.
 
 * Layout: three panels. Crafter holds the rules version, Crafting

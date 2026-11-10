@@ -1,6 +1,6 @@
 /*
- * Modern steampunk theme: flat warm surfaces, hairline borders, and brass
- * and copper used as accents rather than textures. The only web font is
+ * Modern steampunk theme: panels look like sheets of old paper, with brass
+ * and copper used as accents. The only web font is
  * New Rocker for the title and panel headers, self-hosted from
  * @fontsource (see src/main.ts).
  */
@@ -21,6 +21,12 @@
   --f: #e0a43a;
   --cf: #c2412e;
   --bg-wash: 55%;
+  --paper: #f1e3c2;
+  --paper-texture: url('./assets/paper.svg');
+  --paper-edge: #a8763a;
+  --paper-stain: rgb(150 95 35 / 0.14);
+  --paper-well: rgb(255 250 235 / 0.5);
+  --paper-line: rgb(120 80 35 / 0.28);
   --radius: 14px;
   --shadow:
     0 1px 2px rgb(60 40 20 / 0.06), 0 8px 24px -12px rgb(60 40 20 / 0.18);
@@ -39,6 +45,12 @@
   :root {
     --bg: #12100e;
     --bg-wash: 82%;
+    --paper: #2a2218;
+    --paper-texture: url('./assets/paper-dark.svg');
+    --paper-edge: #080604;
+    --paper-stain: rgb(0 0 0 / 0.22);
+    --paper-well: rgb(0 0 0 / 0.22);
+    --paper-line: rgb(210 170 110 / 0.18);
     --surface: #1b1815;
     --sunken: #15120f;
     --text: #f1eadf;
@@ -167,22 +179,53 @@ h3 {
 }
 
 .panel {
+  /* Where each panel's two age stains sit; varied per panel below. */
+  --stain-a: 88% 10%;
+  --stain-b: 8% 92%;
+  --sunken: var(--paper-well);
+  --border: var(--paper-line);
   position: relative;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  /*
+   * Old paper: grain and mottling (SVG turbulence), two foxing stains,
+   * and a base that yellows toward the edges.
+   */
+  background:
+    var(--paper-texture),
+    radial-gradient(
+      circle at var(--stain-a),
+      var(--paper-stain) 0 2.5rem,
+      transparent 7rem
+    ),
+    radial-gradient(
+      ellipse 40% 30% at var(--stain-b),
+      var(--paper-stain),
+      transparent
+    ),
+    radial-gradient(
+      ellipse at center,
+      var(--paper) 50%,
+      color-mix(in srgb, var(--paper-edge) 30%, var(--paper))
+    );
+  border: 1px solid color-mix(in srgb, var(--paper-edge) 35%, transparent);
+  /* Slightly uneven corners, as if worn. */
+  border-radius: 3px 6px 4px 7px / 6px 3px 7px 4px;
+  /* Darkened, scorched-looking edges plus the drop shadow. */
+  box-shadow:
+    inset 0 0 2.5rem -0.5rem
+      color-mix(in srgb, var(--paper-edge) 55%, transparent),
+    inset 0 0 0.35rem color-mix(in srgb, var(--paper-edge) 40%, transparent),
+    var(--shadow);
   padding: 1.5rem;
-  overflow: hidden;
 }
 
-/* A thin brass-to-copper strip across the top of each panel. */
-.panel::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: linear-gradient(90deg, var(--brass), var(--copper));
+.inputs .panel:nth-child(2) {
+  --stain-a: 12% 6%;
+  --stain-b: 94% 80%;
+}
+
+.panel.results {
+  --stain-a: 78% 94%;
+  --stain-b: 20% 8%;
 }
 
 /* ---- Form controls ---- */
@@ -303,7 +346,7 @@ input[aria-invalid='true']:focus-visible {
   margin: 0;
   padding: 0.25rem;
   list-style: none;
-  background: var(--surface);
+  background: var(--paper);
   border: 1px solid var(--border);
   border-radius: 10px;
   box-shadow: var(--shadow);
@@ -319,7 +362,7 @@ input[aria-invalid='true']:focus-visible {
 
 .listbox [role='option']:hover,
 .listbox [role='option'][aria-selected='true'] {
-  background: color-mix(in srgb, var(--brass) 18%, var(--surface));
+  background: color-mix(in srgb, var(--brass) 18%, var(--paper));
 }
 
 .listbox [role='option'][aria-disabled='true'] {
