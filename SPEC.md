@@ -46,6 +46,13 @@ Pathfinder 2nd edition role playing system.
   required, and the additional monetary expenditure required given the
   position of the additional days spent slider.
 
+* Appearance: a modern steampunk theme. Flat warm surfaces with hairline
+  borders and rounded corners; brass and copper are used as accents (a
+  brass-to-copper strip atop each panel, brass sliders and focus rings, a
+  gear logo and a faint gear watermark that slowly turn, still when the
+  user prefers reduced motion). Headings and key figures use a serif; body
+  text uses the system sans-serif. Light and dark modes follow the system.
+
 ## Crafting rules
 
 * Initial monetary expenditure: raw materials worth half the item's Price
