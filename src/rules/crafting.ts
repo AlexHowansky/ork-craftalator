@@ -98,6 +98,18 @@ export function checkOdds(bonus: number, dc: number): CheckOdds {
   };
 }
 
+/**
+ * Circumstance bonus from the Specialty Crafting feat: +1, or +2 when
+ * master or better in Crafting.
+ */
+export function specialtyBonus(
+  hasSpecialty: boolean,
+  proficiency: Proficiency,
+): number {
+  if (!hasSpecialty) return 0;
+  return proficiency === 'master' || proficiency === 'legendary' ? 2 : 1;
+}
+
 /** Highest item level each proficiency rank may Craft. */
 const PROFICIENCY_ITEM_CAP: Record<Proficiency, number> = {
   trained: 8,
@@ -147,6 +159,8 @@ export interface CraftingResult {
   readonly upfrontCp: number;
   readonly remainingCp: number;
   readonly dc: number;
+  /** Crafting bonus used for the check, including feat bonuses. */
+  readonly checkBonus: number;
   readonly odds: CheckOdds;
   /** Upper bound for the additional days input. */
   readonly maxDays: number;
@@ -190,6 +204,8 @@ export function calculate(inputs: CraftingInputs): CraftingResult {
   const upfront = upfrontCost(inputs.priceCp);
   const remaining = remainingCost(inputs.priceCp);
   const dc = craftDc(inputs.itemLevel);
+  const checkBonus =
+    inputs.bonus + specialtyBonus(inputs.hasSpecialty, inputs.proficiency);
   const success = degreeResult(inputs, 'success', setup, upfront, remaining);
   const criticalSuccess = degreeResult(
     inputs,
@@ -203,7 +219,8 @@ export function calculate(inputs: CraftingInputs): CraftingResult {
     upfrontCp: upfront,
     remainingCp: remaining,
     dc,
-    odds: checkOdds(inputs.bonus, dc),
+    checkBonus,
+    odds: checkOdds(checkBonus, dc),
     maxDays: success.maxDays,
     success,
     criticalSuccess,

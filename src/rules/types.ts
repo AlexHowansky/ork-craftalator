@@ -20,6 +20,8 @@ export const LIMITS = Object.freeze({
 export interface CraftingInputs {
   readonly rulesVersion: RulesVersion;
   readonly hasFormula: boolean;
+  /** Has the Specialty Crafting feat for this kind of item. */
+  readonly hasSpecialty: boolean;
   readonly proficiency: Proficiency;
   readonly bonus: number;
   readonly characterLevel: number;

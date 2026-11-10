@@ -129,6 +129,23 @@
           <input id="has-formula" type="checkbox" />
           <label for="has-formula">I have the item's formula</label>
         </div>
+
+        <div class="field">
+          <div class="checkbox-field">
+            <input
+              id="has-specialty"
+              type="checkbox"
+              aria-describedby="has-specialty-hint"
+            />
+            <label for="has-specialty">
+              Specialty Crafting applies to this item
+            </label>
+          </div>
+          <p id="has-specialty-hint" class="hint">
+            +1 circumstance bonus to the Crafting check, or +2 if you are a
+            master in Crafting.
+          </p>
+        </div>
       </form>
 
       <section class="panel results" aria-labelledby="results-h">
@@ -160,6 +177,7 @@
             <span class="f"></span><span class="cf"></span>
           </div>
           <ul id="odds-list" class="odds-list"></ul>
+          <p id="out-check" class="hint"></p>
         </div>
 
         <div class="field range-field" data-range="days">

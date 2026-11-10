@@ -269,6 +269,9 @@ input[aria-invalid='true']:focus-visible {
   display: flex;
   gap: 0.6rem;
   align-items: center;
+}
+
+.field:last-child {
   margin-bottom: 0;
 }
 

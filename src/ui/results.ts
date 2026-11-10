@@ -33,6 +33,11 @@ function renderOdds(result: CraftingResult): void {
     const seg = bar.querySelector<HTMLElement>(`.${cls}`);
     if (seg) seg.style.flexGrow = String(p);
   }
+  const sign = result.checkBonus < 0 ? '-' : '+';
+  text(
+    'out-check',
+    `Rolling d20 ${sign} ${Math.abs(result.checkBonus)} vs DC ${result.dc}`,
+  );
   const list = byId('odds-list', HTMLUListElement);
   list.replaceChildren(
     ...entries.map(([cls, label, p]) => {
@@ -79,6 +84,7 @@ const OUTPUT_IDS = [
 export function clearResult(): void {
   for (const id of OUTPUT_IDS) text(id, '-');
   byId('odds-list', HTMLUListElement).replaceChildren();
+  text('out-check', '');
   for (const seg of byId('odds-bar', HTMLElement).children) {
     (seg as HTMLElement).style.flexGrow = '0';
   }

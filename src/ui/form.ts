@@ -51,6 +51,7 @@ export function initForm(): void {
   const rulesVersion = byId('rules-version', HTMLSelectElement);
   const proficiency = byId('proficiency', HTMLSelectElement);
   const hasFormula = byId('has-formula', HTMLInputElement);
+  const hasSpecialty = byId('has-specialty', HTMLInputElement);
   const price = byId('price', HTMLInputElement);
   const priceError = byId('price-error', HTMLElement);
   const itemLimit = byId('item-level-limit', HTMLElement);
@@ -121,6 +122,7 @@ export function initForm(): void {
         'remaster',
       ),
       hasFormula: hasFormula.checked,
+      hasSpecialty: hasSpecialty.checked,
       proficiency: currentProficiency(),
       bonus: bonus.value,
       characterLevel: characterLevel.value,
@@ -146,7 +148,7 @@ export function initForm(): void {
     }
   }
 
-  for (const el of [rulesVersion, hasFormula]) {
+  for (const el of [rulesVersion, hasFormula, hasSpecialty]) {
     el.addEventListener('change', update);
   }
   proficiency.addEventListener('change', () => {

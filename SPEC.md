@@ -16,6 +16,9 @@ Pathfinder 2nd edition role playing system.
   * Formula. Implemented as a checkbox: whether the crafter has the item's
     formula.
 
+  * Specialty Crafting. Implemented as a checkbox: whether the crafter has
+    the Specialty Crafting feat for this kind of item.
+
   * Crafting skill proficiency level. Implemented as a selector. Values are:
     trained, expert, master, legendary.
 
@@ -67,6 +70,11 @@ Pathfinder 2nd edition role playing system.
   rarity assumed). The app shows the chance of each degree of success using
   the Crafting skill bonus on a d20, including the natural 1 and natural 20
   rules.
+
+* Specialty Crafting: when the feat applies, the Crafting check gets a +1
+  circumstance bonus, or +2 if the crafter is a master (or legendary) in
+  Crafting. The app shows the bonus used for the check. Partial bonuses
+  for items that only partly fit the specialty are left to the user.
 
 * Remaining cost: the Price minus the initial expenditure.
 

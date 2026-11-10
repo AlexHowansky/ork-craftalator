@@ -9,6 +9,7 @@ import {
   itemLevelLimitReason,
   maxItemLevel,
   setupDays,
+  specialtyBonus,
   upfrontCost,
 } from '../src/rules/crafting';
 import type { CraftingInputs } from '../src/rules/types';
@@ -16,6 +17,7 @@ import type { CraftingInputs } from '../src/rules/types';
 const base: CraftingInputs = {
   rulesVersion: 'remaster',
   hasFormula: false,
+  hasSpecialty: false,
   proficiency: 'trained',
   bonus: 7,
   characterLevel: 1,
@@ -156,5 +158,25 @@ describe('calculate', () => {
     const r = calculate({ ...base, additionalDays: 50 });
     expect(r.criticalSuccess.additionalCostCp).toBe(0);
     expect(r.criticalSuccess.totalDays).toBe(2 + 34);
+  });
+});
+
+describe('Specialty Crafting', () => {
+  it.each([
+    [false, 'master', 0],
+    [true, 'trained', 1],
+    [true, 'expert', 1],
+    [true, 'master', 2],
+    [true, 'legendary', 2],
+  ] as const)('feat=%s %s -> +%d', (has, rank, bonus) => {
+    expect(specialtyBonus(has, rank)).toBe(bonus);
+  });
+
+  it('adds to the check bonus and odds', () => {
+    const without = calculate(base);
+    const withFeat = calculate({ ...base, hasSpecialty: true });
+    expect(without.checkBonus).toBe(base.bonus);
+    expect(withFeat.checkBonus).toBe(base.bonus + 1);
+    expect(withFeat.odds).toEqual(checkOdds(base.bonus + 1, withFeat.dc));
   });
 });
