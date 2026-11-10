@@ -2,7 +2,9 @@
  * Modern steampunk theme: flat warm surfaces, hairline borders, and brass
  * and copper used as accents rather than textures. The gear is an inline
  * SVG used as a CSS mask (allowed by the CSP's img-src data:), so it takes
- * its colour from the theme tokens. No web fonts are loaded.
+ * its colour from the theme tokens. The only web font is New Rocker for
+ * the title and panel headers, self-hosted from @fontsource (see
+ * src/main.ts).
  */
 :root {
   --bg: #f5f1ea;
@@ -28,6 +30,7 @@
   --display:
     'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia,
     serif;
+  --title: 'New Rocker', var(--display);
   --gear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill-rule='evenodd' d='M38.6 14.8L43.1 13.7L44.2 4.4L55.8 4.4L56.9 13.7L61.4 14.8L65.8 16.5L72.2 9.7L81.5 16.5L77 24.7L79.9 28.3L82.4 32.2L91.6 30.4L95.2 41.4L86.7 45.4L87 50L86.7 54.6L95.2 58.6L91.6 69.6L82.4 67.8L79.9 71.7L77 75.3L81.5 83.5L72.2 90.3L65.8 83.5L61.4 85.2L56.9 86.3L55.8 95.6L44.2 95.6L43.1 86.3L38.6 85.2L34.2 83.5L27.8 90.3L18.5 83.5L23 75.3L20.1 71.7L17.6 67.8L8.4 69.6L4.8 58.6L13.3 54.6L13 50L13.3 45.4L4.8 41.4L8.4 30.4L17.6 32.2L20.1 28.3L23 24.7L18.5 16.5L27.8 9.7L34.2 16.5Z M50 34a16 16 0 1 0 0 32a16 16 0 1 0 0-32Z'/%3E%3C/svg%3E");
   color-scheme: light dark;
   font-family: var(--sans);
@@ -121,10 +124,10 @@ body::before {
 
 h1 {
   margin: 0;
-  font-family: var(--display);
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--title);
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
   line-height: 1.1;
 }
 
@@ -132,12 +135,15 @@ h1 {
   margin: 0.15rem 0 0;
 }
 
+/* Blackletter is unreadable in spaced capitals, so panel headers keep
+   their natural case. */
 h2 {
-  margin: 0 0 1.25rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  margin: 0 0 1rem;
+  font-family: var(--title);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
   color: var(--accent);
 }
 

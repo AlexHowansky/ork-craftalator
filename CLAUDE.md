@@ -45,6 +45,10 @@ The product specification (terms and features) is in @SPEC.md.
 * Never use `innerHTML` (or similar) with user input; set text with
   `textContent`. No third-party scripts at runtime.
 
+* Web fonts are self-hosted: install them from `@fontsource` and import
+  them in `src/main.ts` so Vite bundles them (CSP `font-src 'self'`).
+  Never load fonts from a third-party CDN.
+
 * We are building a single-page app. There is no authentication, access is
   public.
 

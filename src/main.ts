@@ -1,3 +1,5 @@
+// Self-hosted title font (Latin subset only), bundled by Vite.
+import '@fontsource/new-rocker/latin-400.css';
 import { createLogger } from './logger';
 import { initForm } from './ui/form';
 

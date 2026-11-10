@@ -74,8 +74,10 @@ Pathfinder 2nd edition role playing system.
   borders and rounded corners; brass and copper are used as accents (a
   brass-to-copper strip atop each panel, brass sliders and focus rings, a
   gear logo and a faint gear watermark that slowly turn, still when the
-  user prefers reduced motion). Headings and key figures use a serif; body
-  text uses the system sans-serif. Light and dark modes follow the system.
+  user prefers reduced motion). The title and panel headers use New
+  Rocker, a hammered blackletter display face; other headings and key
+  figures use a serif; body text uses the system sans-serif. Light and
+  dark modes follow the system.
 
 * Layout: three panels. Crafter holds the rules version, Crafting
   proficiency, Crafting bonus and character level. Item holds the item
