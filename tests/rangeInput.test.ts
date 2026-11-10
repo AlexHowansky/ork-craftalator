@@ -65,6 +65,20 @@ describe('createRangeInput', () => {
     expect(text.value).toBe('2');
     expect(onChange).toHaveBeenCalledWith(2);
   });
+
+  it('exposes the slider position as --fill', () => {
+    const { text, slider, r } = setup();
+    const fill = (): string => slider.style.getPropertyValue('--fill');
+    expect(fill()).toBe('0.5');
+    slider.value = '10';
+    fire(slider, 'input');
+    expect(fill()).toBe('1');
+    text.value = '2';
+    fire(text, 'input');
+    expect(fill()).toBe('0.2');
+    r.setMax(0);
+    expect(fill()).toBe('0');
+  });
 });
 
 describe('setValue', () => {

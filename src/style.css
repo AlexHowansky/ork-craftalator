@@ -296,10 +296,115 @@ input[aria-invalid='true']:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+/*
+ * Sliders: a brass groove with an anvil thumb (src/assets/anvil.svg).
+ * Each vendor pseudo-element needs its own rule: a selector list with an
+ * unknown pseudo-element is dropped entirely.
+ */
 .range-row input[type='range'] {
+  --track-h: 6px;
+  --thumb-w: 28px;
+  --thumb-h: 20px;
+  --track-fill: var(--brass);
+  --track-empty: #fff;
+  --track-edge: color-mix(in srgb, var(--paper-edge) 45%, transparent);
   flex: 1;
   min-width: 0;
-  accent-color: var(--brass);
+  height: 1.5rem;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.range-row input[type='range']::-webkit-slider-runnable-track {
+  height: var(--track-h);
+  border-radius: 999px;
+  /*
+   * Brass up to the thumb's centre, white after it. --fill (0 - 1) is set
+   * by src/ui/rangeInput.ts; the thumb centre travels from half a thumb
+   * width in from each end.
+   */
+  --fill-at: calc(
+    var(--thumb-w) / 2 + (100% - var(--thumb-w)) * var(--fill, 0)
+  );
+  background: linear-gradient(
+    to right,
+    var(--track-fill) var(--fill-at),
+    var(--track-empty) var(--fill-at)
+  );
+  box-shadow:
+    inset 0 0 0 1px var(--track-edge),
+    inset 0 1px 2px rgb(40 25 10 / 0.3);
+}
+
+.range-row input[type='range']::-moz-range-track {
+  height: var(--track-h);
+  border-radius: 999px;
+  background: var(--track-empty);
+  box-shadow:
+    inset 0 0 0 1px var(--track-edge),
+    inset 0 1px 2px rgb(40 25 10 / 0.3);
+}
+
+/* Firefox fills the part left of the thumb natively. */
+.range-row input[type='range']::-moz-range-progress {
+  height: var(--track-h);
+  border-radius: 999px;
+  background: var(--track-fill);
+  box-shadow: inset 0 1px 2px rgb(40 25 10 / 0.3);
+}
+
+.range-row input[type='range']::-webkit-slider-thumb {
+  width: var(--thumb-w);
+  height: var(--thumb-h);
+  margin-top: calc((var(--track-h) - var(--thumb-h)) / 2);
+  border: 0;
+  appearance: none;
+  background: url('./assets/anvil.svg') center / contain no-repeat;
+  filter: drop-shadow(0 1px 1px rgb(40 25 10 / 0.4));
+}
+
+.range-row input[type='range']::-moz-range-thumb {
+  width: var(--thumb-w);
+  height: var(--thumb-h);
+  border: 0;
+  border-radius: 0;
+  background: url('./assets/anvil.svg') center / contain no-repeat;
+  filter: drop-shadow(0 1px 1px rgb(40 25 10 / 0.4));
+}
+
+.range-row input[type='range']:hover::-webkit-slider-thumb,
+.range-row input[type='range']:active::-webkit-slider-thumb {
+  transform: scale(1.1);
+}
+
+.range-row input[type='range']:hover::-moz-range-thumb,
+.range-row input[type='range']:active::-moz-range-thumb {
+  transform: scale(1.1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .range-row input[type='range']::-webkit-slider-thumb {
+    transition: transform 0.12s ease-out;
+  }
+
+  .range-row input[type='range']::-moz-range-thumb {
+    transition: transform 0.12s ease-out;
+  }
+}
+
+.range-row input[type='range']:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.range-row input[type='range']:disabled::-webkit-slider-thumb {
+  transform: none;
+}
+
+.range-row input[type='range']:disabled::-moz-range-thumb {
+  transform: none;
 }
 
 .checkbox-field {

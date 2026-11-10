@@ -82,10 +82,12 @@ Pathfinder 2nd edition role playing system.
   fibre grain and mottling, a couple of age stains (placed differently
   per panel), edges darkened as if aged and slightly uneven corners. In
   dark mode the paper is a dim, aged brown. Brass and copper are used as
-  accents (brass sliders and focus rings). The title and panel headers
-  use New Rocker, a hammered blackletter display face; other headings
-  and key figures use a serif; body text uses the system sans-serif. Light and
-  dark modes follow the system.
+  accents (focus rings, and sliders whose thumb is a brass anvil on a
+  grooved track, brass to the left of the thumb and white to the
+  right). The title and panel headers use New Rocker, a hammered
+  blackletter display face; other headings and key figures use a serif;
+  body text uses the system sans-serif. Light and dark modes follow the
+  system.
 
 * Layout: three panels. Crafter holds, in order, the rules version,
   character level, Crafting proficiency and Crafting bonus. Item holds the item

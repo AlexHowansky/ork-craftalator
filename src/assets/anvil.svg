@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 20" width="28"
+  height="20">
+  <!-- Brass anvil, side view with the horn to the left: slider thumb. -->
+  <path
+    d="M2 3H26V8H21L19.5 13H23L24.5 18H7.5L9 13H12.5L11 8H8Q4 7.5 2 3Z"
+    fill="#b07d2c" stroke="#5e3d0c" stroke-width="1"
+    stroke-linejoin="round" />
+  <path d="M5 3.9H25.2" stroke="#e8c27a" stroke-width="1"
+    stroke-linecap="round" />
+  <path d="M9.5 16.6H22.5" stroke="#d3a253" stroke-width="0.8"
+    stroke-linecap="round" />
+</svg>

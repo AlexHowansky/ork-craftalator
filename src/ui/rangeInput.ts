@@ -44,11 +44,18 @@ export function createRangeInput(opts: RangeInputOptions): RangeInput {
       : `${label} must be a whole number from ${min} to ${max}.`;
   }
 
+  /** Expose the slider position (0 - 1) so CSS can fill the track. */
+  function syncFill(n: number): void {
+    const fill = max > min ? (n - min) / (max - min) : 0;
+    slider.style.setProperty('--fill', String(fill));
+  }
+
   function render(): void {
     slider.min = String(min);
     slider.max = String(max);
     slider.value = String(value);
     slider.disabled = min === max;
+    syncFill(value);
     text.value = String(value);
     text.setAttribute('aria-invalid', 'false');
     setError(error, null);
@@ -78,6 +85,7 @@ export function createRangeInput(opts: RangeInputOptions): RangeInput {
     text.setAttribute('aria-invalid', 'false');
     setError(error, null);
     slider.value = String(n);
+    syncFill(n);
     commit(n, 'text');
   });
 
