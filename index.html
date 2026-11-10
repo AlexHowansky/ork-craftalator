@@ -20,183 +20,189 @@
     </header>
 
     <main class="layout">
-      <form id="inputs" class="panel" novalidate aria-labelledby="inputs-h">
-        <h2 id="inputs-h">Crafter &amp; item</h2>
+      <form id="inputs" class="inputs" novalidate>
+        <section class="panel" aria-labelledby="crafter-h">
+          <h2 id="crafter-h">Crafter</h2>
 
-        <div class="field">
-          <label for="rules-version">Rules version</label>
-          <select id="rules-version">
-            <option value="remaster" selected>Remaster (Player Core)</option>
-            <option value="legacy">Legacy (Core Rulebook)</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="proficiency">Crafting proficiency</label>
-          <select id="proficiency">
-            <option value="trained" selected>Trained</option>
-            <option value="expert">Expert</option>
-            <option value="master">Master</option>
-            <option value="legendary">Legendary</option>
-          </select>
-        </div>
-
-        <div class="field range-field" data-range="bonus">
-          <label for="bonus">Crafting bonus</label>
-          <div class="range-row">
-            <input
-              id="bonus"
-              type="text"
-              inputmode="numeric"
-              value="5"
-              aria-describedby="bonus-error"
-            />
-            <input
-              id="bonus-slider"
-              type="range"
-              min="0"
-              max="40"
-              value="5"
-              aria-label="Crafting bonus slider"
-            />
+          <div class="field">
+            <label for="rules-version">Rules version</label>
+            <select id="rules-version">
+              <option value="remaster" selected>Remaster (Player Core)</option>
+              <option value="legacy">Legacy (Core Rulebook)</option>
+            </select>
           </div>
-          <p id="bonus-error" class="error" role="alert" hidden></p>
-        </div>
 
-        <div class="field range-field" data-range="character-level">
-          <label for="character-level">Character level</label>
-          <div class="range-row">
-            <input
-              id="character-level"
-              type="text"
-              inputmode="numeric"
-              value="1"
-              aria-describedby="character-level-error"
-            />
-            <input
-              id="character-level-slider"
-              type="range"
-              min="1"
-              max="20"
-              value="1"
-              aria-label="Character level slider"
-            />
+          <div class="field">
+            <label for="proficiency">Crafting proficiency</label>
+            <select id="proficiency">
+              <option value="trained" selected>Trained</option>
+              <option value="expert">Expert</option>
+              <option value="master">Master</option>
+              <option value="legendary">Legendary</option>
+            </select>
           </div>
-          <p id="character-level-error" class="error" role="alert" hidden></p>
-        </div>
 
-        <div class="field item-search">
-          <label for="item-search">Find an item</label>
-          <div class="combobox">
+          <div class="field range-field" data-range="bonus">
+            <label for="bonus">Crafting bonus</label>
+            <div class="range-row">
+              <input
+                id="bonus"
+                type="text"
+                inputmode="numeric"
+                value="5"
+                aria-describedby="bonus-error"
+              />
+              <input
+                id="bonus-slider"
+                type="range"
+                min="0"
+                max="40"
+                value="5"
+                aria-label="Crafting bonus slider"
+              />
+            </div>
+            <p id="bonus-error" class="error" role="alert" hidden></p>
+          </div>
+
+          <div class="field range-field" data-range="character-level">
+            <label for="character-level">Character level</label>
+            <div class="range-row">
+              <input
+                id="character-level"
+                type="text"
+                inputmode="numeric"
+                value="1"
+                aria-describedby="character-level-error"
+              />
+              <input
+                id="character-level-slider"
+                type="range"
+                min="1"
+                max="20"
+                value="1"
+                aria-label="Character level slider"
+              />
+            </div>
+            <p id="character-level-error" class="error" role="alert" hidden></p>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="item-h">
+          <h2 id="item-h">Item</h2>
+
+          <div class="field item-search">
+            <label for="item-search">Find an item</label>
+            <div class="combobox">
+              <input
+                id="item-search"
+                type="text"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="item-search-list"
+                aria-describedby="item-search-status"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="100"
+                placeholder="e.g. healing potion"
+              />
+              <ul
+                id="item-search-list"
+                class="listbox"
+                role="listbox"
+                aria-label="Matching items"
+                hidden
+              ></ul>
+            </div>
+            <p id="item-search-status" class="hint" aria-live="polite"></p>
+            <p
+              id="item-search-selected"
+              class="hint"
+              aria-live="polite"
+              hidden
+            ></p>
+          </div>
+
+          <div class="field range-field" data-range="item-level">
+            <label for="item-level">Item level</label>
+            <div class="range-row">
+              <input
+                id="item-level"
+                type="text"
+                inputmode="numeric"
+                value="1"
+                aria-describedby="item-level-limit item-level-error"
+              />
+              <input
+                id="item-level-slider"
+                type="range"
+                min="0"
+                max="1"
+                value="1"
+                aria-label="Item level slider"
+              />
+            </div>
+            <p id="item-level-limit" class="hint" aria-live="polite" hidden></p>
+            <p id="item-level-error" class="error" role="alert" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="price">Item Price</label>
             <input
-              id="item-search"
+              id="price"
               type="text"
-              role="combobox"
-              aria-autocomplete="list"
-              aria-expanded="false"
-              aria-controls="item-search-list"
-              aria-describedby="item-search-status"
+              value="20 gp"
               autocomplete="off"
               spellcheck="false"
               maxlength="100"
-              placeholder="e.g. healing potion"
+              aria-describedby="price-hint price-error"
             />
-            <ul
-              id="item-search-list"
-              class="listbox"
-              role="listbox"
-              aria-label="Matching items"
-              hidden
-            ></ul>
+            <p id="price-hint" class="hint">
+              e.g. 15 gp, 3 gp 5 sp, 40 cp. A bare number is gold.
+            </p>
+            <p id="price-error" class="error" role="alert" hidden></p>
           </div>
-          <p id="item-search-status" class="hint" aria-live="polite"></p>
-          <p
-            id="item-search-selected"
-            class="hint"
-            aria-live="polite"
-            hidden
-          ></p>
-        </div>
 
-        <div class="field range-field" data-range="item-level">
-          <label for="item-level">Item level</label>
-          <div class="range-row">
-            <input
-              id="item-level"
-              type="text"
-              inputmode="numeric"
-              value="1"
-              aria-describedby="item-level-limit item-level-error"
-            />
-            <input
-              id="item-level-slider"
-              type="range"
-              min="0"
-              max="1"
-              value="1"
-              aria-label="Item level slider"
-            />
+          <div class="field checkbox-field">
+            <input id="has-formula" type="checkbox" />
+            <label for="has-formula">I have the item's formula</label>
           </div>
-          <p id="item-level-limit" class="hint" aria-live="polite" hidden></p>
-          <p id="item-level-error" class="error" role="alert" hidden></p>
-        </div>
 
-        <div class="field">
-          <label for="price">Item Price</label>
-          <input
-            id="price"
-            type="text"
-            value="20 gp"
-            autocomplete="off"
-            spellcheck="false"
-            maxlength="100"
-            aria-describedby="price-hint price-error"
-          />
-          <p id="price-hint" class="hint">
-            e.g. 15 gp, 3 gp 5 sp, 40 cp. A bare number is gold.
-          </p>
-          <p id="price-error" class="error" role="alert" hidden></p>
-        </div>
-
-        <div class="field checkbox-field">
-          <input id="has-formula" type="checkbox" />
-          <label for="has-formula">I have the item's formula</label>
-        </div>
-
-        <div class="field">
-          <div class="checkbox-field">
-            <input
-              id="has-specialty"
-              type="checkbox"
-              aria-describedby="has-specialty-hint"
-            />
-            <label for="has-specialty">
-              Specialty Crafting applies to this item
-            </label>
+          <div class="field">
+            <div class="checkbox-field">
+              <input
+                id="has-specialty"
+                type="checkbox"
+                aria-describedby="has-specialty-hint"
+              />
+              <label for="has-specialty">
+                Specialty Crafting applies to this item
+              </label>
+            </div>
+            <p id="has-specialty-hint" class="hint">
+              +1 circumstance bonus to the Crafting check, or +2 if you are a
+              master in Crafting.
+            </p>
           </div>
-          <p id="has-specialty-hint" class="hint">
-            +1 circumstance bonus to the Crafting check, or +2 if you are a
-            master in Crafting.
-          </p>
-        </div>
 
-        <div class="field">
-          <div class="checkbox-field">
-            <input
-              id="has-impeccable"
-              type="checkbox"
-              disabled
-              aria-describedby="has-impeccable-hint"
-            />
-            <label for="has-impeccable">
-              Impeccable Crafting applies to this item
-            </label>
+          <div class="field">
+            <div class="checkbox-field">
+              <input
+                id="has-impeccable"
+                type="checkbox"
+                disabled
+                aria-describedby="has-impeccable-hint"
+              />
+              <label for="has-impeccable">
+                Impeccable Crafting applies to this item
+              </label>
+            </div>
+            <p id="has-impeccable-hint" class="hint">
+              A success becomes a critical success. Needs Specialty Crafting and
+              master Crafting.
+            </p>
           </div>
-          <p id="has-impeccable-hint" class="hint">
-            A success becomes a critical success. Needs Specialty Crafting and
-            master Crafting.
-          </p>
-        </div>
+        </section>
       </form>
 
       <section class="panel results" aria-labelledby="results-h">
