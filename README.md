@@ -4,6 +4,10 @@ A calculator for the time and cost of crafting items in the Pathfinder
 Second Edition roleplaying game. It supports both the Remaster (Player Core)
 and Legacy (Core Rulebook) rules.
 
+![Craftalator's Crafter, Item and Results panels, calculating the cost
+and time for a master crafter to make an Elixir of Life
+(Moderate)](example.webp)
+
 Enter the crafter's level, Crafting proficiency and bonus, and the item's
 level and Price. Craftalator shows:
 
