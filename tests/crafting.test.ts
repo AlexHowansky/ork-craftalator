@@ -10,6 +10,8 @@ import {
   maxItemLevel,
   setupDays,
   specialtyBonus,
+  impeccableAllowed,
+  upgradeSuccesses,
   upfrontCost,
 } from '../src/rules/crafting';
 import type { CraftingInputs } from '../src/rules/types';
@@ -18,6 +20,7 @@ const base: CraftingInputs = {
   rulesVersion: 'remaster',
   hasFormula: false,
   hasSpecialty: false,
+  hasImpeccable: false,
   proficiency: 'trained',
   bonus: 7,
   characterLevel: 1,
@@ -178,5 +181,54 @@ describe('Specialty Crafting', () => {
     expect(without.checkBonus).toBe(base.bonus);
     expect(withFeat.checkBonus).toBe(base.bonus + 1);
     expect(withFeat.odds).toEqual(checkOdds(base.bonus + 1, withFeat.dc));
+  });
+});
+
+describe('Impeccable Crafting', () => {
+  it.each([
+    [false, 'legendary', false],
+    [true, 'trained', false],
+    [true, 'expert', false],
+    [true, 'master', true],
+    [true, 'legendary', true],
+  ] as const)('specialty=%s %s -> %s', (has, rank, allowed) => {
+    expect(impeccableAllowed(has, rank)).toBe(allowed);
+  });
+
+  it('moves the success chance into critical success', () => {
+    const odds = checkOdds(10, 20);
+    const up = upgradeSuccesses(odds);
+    expect(up.success).toBe(0);
+    expect(up.criticalSuccess).toBeCloseTo(odds.criticalSuccess + odds.success);
+    expect(up.failure).toBe(odds.failure);
+    expect(up.criticalFailure).toBe(odds.criticalFailure);
+  });
+
+  const master = {
+    ...base,
+    proficiency: 'master',
+    characterLevel: 9,
+    itemLevel: 9,
+    bonus: 20,
+    priceCp: 100000,
+    hasSpecialty: true,
+  } as const;
+
+  it('makes a success pay out as a critical success', () => {
+    const r = calculate({ ...master, hasImpeccable: true });
+    expect(r.impeccable).toBe(true);
+    expect(r.success).toEqual(r.criticalSuccess);
+    expect(r.maxDays).toBe(r.criticalSuccess.maxDays);
+    expect(r.odds.success).toBe(0);
+  });
+
+  it('is ignored without its prerequisites', () => {
+    const r = calculate({
+      ...master,
+      hasSpecialty: false,
+      hasImpeccable: true,
+    });
+    expect(r.impeccable).toBe(false);
+    expect(r.success.perDayCp).toBeLessThan(r.criticalSuccess.perDayCp);
   });
 });

@@ -19,6 +19,11 @@ Pathfinder 2nd edition role playing system.
   * Specialty Crafting. Implemented as a checkbox: whether the crafter has
     the Specialty Crafting feat for this kind of item.
 
+  * Impeccable Crafting. Implemented as a checkbox: whether the crafter
+    has the Impeccable Crafting feat for this kind of item. Only enabled
+    when Specialty Crafting is checked and the crafter is a master or
+    legendary in Crafting; otherwise it is unchecked.
+
   * Crafting skill proficiency level. Implemented as a selector. Values are:
     trained, expert, master, legendary.
 
@@ -75,6 +80,12 @@ Pathfinder 2nd edition role playing system.
   circumstance bonus, or +2 if the crafter is a master (or legendary) in
   Crafting. The app shows the bonus used for the check. Partial bonuses
   for items that only partly fit the specialty are left to the user.
+
+* Impeccable Crafting: a rolled success becomes a critical success. The
+  odds add the success chance to the critical success chance, and the
+  Success column uses the critical success figures (marked as counting as
+  critical). The additional days slider is then limited by the critical
+  success max.
 
 * Remaining cost: the Price minus the initial expenditure.
 

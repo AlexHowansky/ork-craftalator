@@ -110,6 +110,31 @@ export function specialtyBonus(
   return proficiency === 'master' || proficiency === 'legendary' ? 2 : 1;
 }
 
+/**
+ * Whether Impeccable Crafting may be taken: it needs master Crafting and
+ * Specialty Crafting for the item.
+ */
+export function impeccableAllowed(
+  hasSpecialty: boolean,
+  proficiency: Proficiency,
+): boolean {
+  return (
+    hasSpecialty && (proficiency === 'master' || proficiency === 'legendary')
+  );
+}
+
+/**
+ * Impeccable Crafting: every success becomes a critical success, so the
+ * success chance moves into the critical success chance.
+ */
+export function upgradeSuccesses(odds: CheckOdds): CheckOdds {
+  return {
+    ...odds,
+    criticalSuccess: odds.criticalSuccess + odds.success,
+    success: 0,
+  };
+}
+
 /** Highest item level each proficiency rank may Craft. */
 const PROFICIENCY_ITEM_CAP: Record<Proficiency, number> = {
   trained: 8,
@@ -161,6 +186,8 @@ export interface CraftingResult {
   readonly dc: number;
   /** Crafting bonus used for the check, including feat bonuses. */
   readonly checkBonus: number;
+  /** Impeccable Crafting applies: a success counts as a critical success. */
+  readonly impeccable: boolean;
   readonly odds: CheckOdds;
   /** Upper bound for the additional days input. */
   readonly maxDays: number;
@@ -175,6 +202,7 @@ function degreeResult(
   upfront: number,
   remaining: number,
 ): DegreeResult {
+  // Callers pass the degree actually achieved, after any upgrade.
   const perDayCp = dailyReduction(
     inputs.characterLevel,
     inputs.proficiency,
@@ -206,7 +234,16 @@ export function calculate(inputs: CraftingInputs): CraftingResult {
   const dc = craftDc(inputs.itemLevel);
   const checkBonus =
     inputs.bonus + specialtyBonus(inputs.hasSpecialty, inputs.proficiency);
-  const success = degreeResult(inputs, 'success', setup, upfront, remaining);
+  const impeccable =
+    inputs.hasImpeccable &&
+    impeccableAllowed(inputs.hasSpecialty, inputs.proficiency);
+  const success = degreeResult(
+    inputs,
+    impeccable ? 'criticalSuccess' : 'success',
+    setup,
+    upfront,
+    remaining,
+  );
   const criticalSuccess = degreeResult(
     inputs,
     'criticalSuccess',
@@ -220,7 +257,10 @@ export function calculate(inputs: CraftingInputs): CraftingResult {
     remainingCp: remaining,
     dc,
     checkBonus,
-    odds: checkOdds(checkBonus, dc),
+    impeccable,
+    odds: impeccable
+      ? upgradeSuccesses(checkOdds(checkBonus, dc))
+      : checkOdds(checkBonus, dc),
     maxDays: success.maxDays,
     success,
     criticalSuccess,

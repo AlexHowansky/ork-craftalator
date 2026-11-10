@@ -22,6 +22,8 @@ export interface CraftingInputs {
   readonly hasFormula: boolean;
   /** Has the Specialty Crafting feat for this kind of item. */
   readonly hasSpecialty: boolean;
+  /** Has the Impeccable Crafting feat (needs Specialty Crafting, master). */
+  readonly hasImpeccable: boolean;
   readonly proficiency: Proficiency;
   readonly bonus: number;
   readonly characterLevel: number;

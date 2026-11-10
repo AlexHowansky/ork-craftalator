@@ -59,6 +59,10 @@ export function renderResult(result: CraftingResult): void {
   text('out-dc', String(result.dc));
   text('out-remaining', formatCp(result.remainingCp));
   renderOdds(result);
+  text(
+    's-heading',
+    result.impeccable ? 'Success (counts as critical)' : 'Success',
+  );
   renderDegree('s', result.success, result.setupDays);
   renderDegree('cs', result.criticalSuccess, result.setupDays);
 }

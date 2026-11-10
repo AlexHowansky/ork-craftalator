@@ -3,6 +3,7 @@ import { createLogger } from '../logger';
 import { parsePrice } from '../money';
 import {
   calculate,
+  impeccableAllowed,
   itemLevelLimitReason,
   maxItemLevel,
 } from '../rules/crafting';
@@ -52,6 +53,7 @@ export function initForm(): void {
   const proficiency = byId('proficiency', HTMLSelectElement);
   const hasFormula = byId('has-formula', HTMLInputElement);
   const hasSpecialty = byId('has-specialty', HTMLInputElement);
+  const hasImpeccable = byId('has-impeccable', HTMLInputElement);
   const price = byId('price', HTMLInputElement);
   const priceError = byId('price-error', HTMLElement);
   const itemLimit = byId('item-level-limit', HTMLElement);
@@ -101,7 +103,18 @@ export function initForm(): void {
     setError(itemLimit, reason);
   }
 
+  /** Impeccable Crafting needs Specialty Crafting and master Crafting. */
+  function applyImpeccableRequirements(): void {
+    const allowed = impeccableAllowed(
+      hasSpecialty.checked,
+      currentProficiency(),
+    );
+    hasImpeccable.disabled = !allowed;
+    if (!allowed) hasImpeccable.checked = false;
+  }
+
   applyItemLevelCap();
+  applyImpeccableRequirements();
 
   function recalc(): void {
     const parsed = parsePrice(price.value);
@@ -123,6 +136,7 @@ export function initForm(): void {
       ),
       hasFormula: hasFormula.checked,
       hasSpecialty: hasSpecialty.checked,
+      hasImpeccable: hasImpeccable.checked,
       proficiency: currentProficiency(),
       bonus: bonus.value,
       characterLevel: characterLevel.value,
@@ -148,11 +162,16 @@ export function initForm(): void {
     }
   }
 
-  for (const el of [rulesVersion, hasFormula, hasSpecialty]) {
+  for (const el of [rulesVersion, hasFormula, hasImpeccable]) {
     el.addEventListener('change', update);
   }
+  hasSpecialty.addEventListener('change', () => {
+    applyImpeccableRequirements();
+    update();
+  });
   proficiency.addEventListener('change', () => {
     applyItemLevelCap();
+    applyImpeccableRequirements();
     update();
   });
   price.addEventListener('input', update);

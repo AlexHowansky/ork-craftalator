@@ -146,6 +146,24 @@
             master in Crafting.
           </p>
         </div>
+
+        <div class="field">
+          <div class="checkbox-field">
+            <input
+              id="has-impeccable"
+              type="checkbox"
+              disabled
+              aria-describedby="has-impeccable-hint"
+            />
+            <label for="has-impeccable">
+              Impeccable Crafting applies to this item
+            </label>
+          </div>
+          <p id="has-impeccable-hint" class="hint">
+            A success becomes a critical success. Needs Specialty Crafting and
+            master Crafting.
+          </p>
+        </div>
       </form>
 
       <section class="panel results" aria-labelledby="results-h">
@@ -206,7 +224,7 @@
           <thead>
             <tr>
               <th scope="col"><span class="visually-hidden">Value</span></th>
-              <th scope="col">Success</th>
+              <th scope="col" id="s-heading">Success</th>
               <th scope="col">Critical success</th>
             </tr>
           </thead>
