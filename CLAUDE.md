@@ -29,6 +29,8 @@ The product specification (terms and features) is in @SPEC.md.
   * `src/money.ts` - money parsing and formatting. All money is handled as
     integer copper pieces, never floats.
   * `src/logger.ts` - the only logging entry point.
+  * `src/settings.ts` - saves and restores the Crafter panel in
+    `localStorage`; the only module that touches browser storage.
   * `src/ui/` - DOM code; `src/main.ts` wires everything together.
   * `tests/` - Vitest unit tests.
 
@@ -45,7 +47,12 @@ The product specification (terms and features) is in @SPEC.md.
   Keep `package-lock.json` in sync as well: after any dependency change,
   run both `bun install` and `npm install` and commit both lockfiles.
 
-* No local storage is used; the app is stateless.
+* Storage: `localStorage` only, and only for the Crafter panel
+  (`src/settings.ts`, key `craftalator.crafter.v1`). Treat stored data as
+  untrusted: validate every field on load, falling back to defaults
+  field by field. Storage may be unavailable or throw (private browsing,
+  blocked site data); catch, log a warning and carry on. Bump the key's
+  version if the stored shape changes incompatibly.
 
 * Logging: use `src/logger.ts` (`debug`, `info`, `warn`, `error`), never
   `console` directly. Messages are prefixed with `[craftalator]` and a module
@@ -76,7 +83,7 @@ The product specification (terms and features) is in @SPEC.md.
   when fetching and again when loading, and only link to AoN page
   paths.
 
-* If local storage is needed, prompt me for the engine to use.
+* If more storage is needed, prompt me for the engine to use.
 
 * Observe OWASP Top Ten guidelines.
 

@@ -9,6 +9,7 @@ import {
   maxItemLevel,
 } from '../rules/crafting';
 import {
+  CRAFTING_FEATS,
   LIMITS,
   PROFICIENCIES,
   RARITIES,
@@ -18,6 +19,7 @@ import {
   type Rarity,
   type RulesVersion,
 } from '../rules/types';
+import { loadCrafterSettings, saveCrafterSettings } from '../settings';
 import { byId, setError } from './dom';
 import { createItemSearch } from './itemSearch';
 import { createRangeInput, type RangeInput } from './rangeInput';
@@ -70,6 +72,20 @@ export function initForm(): void {
     snare: byId('has-snare', HTMLInputElement),
   };
 
+  // Restore the saved Crafter panel before the range inputs read it.
+  const saved = loadCrafterSettings();
+  if (saved) {
+    rulesVersion.value = saved.rulesVersion;
+    proficiency.value = saved.proficiency;
+    byId('character-level', HTMLInputElement).value = String(
+      saved.characterLevel,
+    );
+    byId('bonus', HTMLInputElement).value = String(saved.bonus);
+    for (const feat of CRAFTING_FEATS) {
+      featBoxes[feat].checked = saved.feats[feat];
+    }
+  }
+
   // Ignore change events fired while the inputs are being set up.
   let ready = false;
 
@@ -77,12 +93,35 @@ export function initForm(): void {
     if (ready) recalc();
   };
 
+  /** Remember the Crafter panel for the next visit. */
+  const saveCrafter = (): void => {
+    if (!ready) return;
+    saveCrafterSettings({
+      rulesVersion: oneOf<RulesVersion>(
+        RULES_VERSIONS,
+        rulesVersion.value,
+        'remaster',
+      ),
+      characterLevel: characterLevel.value,
+      proficiency: currentProficiency(),
+      bonus: bonus.value,
+      feats: {
+        alchemical: featBoxes.alchemical.checked,
+        magical: featBoxes.magical.checked,
+        snare: featBoxes.snare.checked,
+      },
+    });
+  };
+
   const bonus = range(
     'bonus',
     'Crafting bonus',
     LIMITS.bonus.min,
     LIMITS.bonus.max,
-    update,
+    () => {
+      saveCrafter();
+      update();
+    },
   );
   const itemLevel = range(
     'item-level',
@@ -97,6 +136,7 @@ export function initForm(): void {
     LIMITS.characterLevel.min,
     LIMITS.characterLevel.max,
     () => {
+      saveCrafter();
       applyItemLevelCap();
       update();
     },
@@ -183,14 +223,22 @@ export function initForm(): void {
     }
   }
 
-  for (const el of [rulesVersion, rarity, hasFormula, hasImpeccable]) {
+  for (const el of [rarity, hasFormula, hasImpeccable]) {
     el.addEventListener('change', update);
+  }
+  rulesVersion.addEventListener('change', () => {
+    saveCrafter();
+    update();
+  });
+  for (const box of Object.values(featBoxes)) {
+    box.addEventListener('change', saveCrafter);
   }
   hasSpecialty.addEventListener('change', () => {
     applyImpeccableRequirements();
     update();
   });
   proficiency.addEventListener('change', () => {
+    saveCrafter();
     applyItemLevelCap();
     applyImpeccableRequirements();
     update();

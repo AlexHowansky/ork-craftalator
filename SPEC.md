@@ -93,6 +93,12 @@ Pathfinder 2nd edition role playing system.
   required, and the additional monetary expenditure required given the
   position of the additional days spent slider.
 
+* The Crafter panel (rules version, character level, Crafting
+  proficiency, Crafting bonus and the Crafting feat checkboxes) is
+  remembered in the browser and restored on the next visit. Saved values
+  that are invalid fall back to the defaults. The Item panel is not
+  remembered.
+
 * Appearance: a modern steampunk theme over a fixed parchment blueprint
   backdrop, softened by a wash of the page colour (heavier in dark mode)
   so text stays readable. Each panel looks like a sheet of old paper:
