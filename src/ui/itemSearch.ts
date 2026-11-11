@@ -12,6 +12,7 @@ import {
 } from '../items';
 import { createLogger } from '../logger';
 import { formatCp } from '../money';
+import { CRAFTING_FEAT_NAMES, type CraftingFeat } from '../rules/types';
 
 const log = createLogger('itemSearch');
 
@@ -44,6 +45,8 @@ export interface ItemSearchOptions {
   readonly onSelect: (item: ItemMatch) => void;
   /** Highest item level the crafter can Craft; higher items are ghosted. */
   readonly maxLevel: () => number;
+  /** Whether the crafter has a Crafting feat; items needing one are ghosted. */
+  readonly hasFeat: (feat: CraftingFeat) => boolean;
   /** Injected for tests. */
   readonly search?: typeof searchItems;
   readonly load?: typeof loadCatalog;
@@ -55,24 +58,37 @@ export interface ItemSearch {
   close(): void;
 }
 
-function describe(item: ItemMatch, tooHigh: boolean): string {
-  const level = `Level ${item.level}${tooHigh ? ' (too high to Craft)' : ''}`;
-  const parts = [level, formatCp(item.priceCp)];
+/** Why the crafter can't Craft an item yet; empty if they can. */
+export function blockers(
+  item: ItemMatch,
+  maxLevel: number,
+  hasFeat: (feat: CraftingFeat) => boolean,
+): string[] {
+  const reasons = item.level > maxLevel ? ['too high to Craft'] : [];
+  for (const feat of item.feats) {
+    if (!hasFeat(feat)) reasons.push(`needs ${CRAFTING_FEAT_NAMES[feat]}`);
+  }
+  return reasons;
+}
+
+function describe(item: ItemMatch, reasons: readonly string[]): string {
+  const note = reasons.length > 0 ? ` (${reasons.join('; ')})` : '';
+  const parts = [`Level ${item.level}${note}`, formatCp(item.priceCp)];
   if (item.rarity !== 'common') parts.push(item.rarity);
   if (item.legacy) parts.push('Legacy');
   return parts.join(' · ');
 }
 
 export function createItemSearch(opts: ItemSearchOptions): ItemSearch {
-  const { input, list, status, selected, onSelect, maxLevel } = opts;
+  const { input, list, status, selected, onSelect, maxLevel, hasFeat } = opts;
   const search = opts.search ?? searchItems;
   const load = opts.load ?? loadCatalog;
   const debounceMs = opts.debounceMs ?? DEBOUNCE_MS;
 
   let items: ItemMatch[] = [];
+  /** Per item, why it can't be Crafted, as of the last render. */
+  let blocked: string[][] = [];
   let active = -1;
-  /** Item level limit when the list was last rendered. */
-  let limit = Number.POSITIVE_INFINITY;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let inflight: AbortController | undefined;
 
@@ -113,8 +129,7 @@ export function createItemSearch(opts: ItemSearchOptions): ItemSearch {
   }
 
   function craftable(i: number): boolean {
-    const item = items[i];
-    return item !== undefined && item.level <= limit;
+    return items[i] !== undefined && blocked[i]?.length === 0;
   }
 
   /** Next craftable option from the active one, or -1 if none. */
@@ -129,20 +144,21 @@ export function createItemSearch(opts: ItemSearchOptions): ItemSearch {
   }
 
   function renderList(): void {
-    limit = maxLevel();
+    const limit = maxLevel();
+    blocked = items.map((item) => blockers(item, limit, hasFeat));
     const nodes = items.map((item, i) => {
-      const tooHigh = item.level > limit;
+      const reasons = blocked[i] ?? [];
       const li = document.createElement('li');
       li.id = optionId(i);
       li.setAttribute('role', 'option');
       li.setAttribute('aria-selected', 'false');
-      if (tooHigh) li.setAttribute('aria-disabled', 'true');
+      if (reasons.length > 0) li.setAttribute('aria-disabled', 'true');
       const name = document.createElement('span');
       name.className = 'option-name';
       name.textContent = item.name;
       const meta = document.createElement('span');
       meta.className = 'option-meta';
-      meta.textContent = describe(item, tooHigh);
+      meta.textContent = describe(item, reasons);
       li.append(name, meta);
       return li;
     });
@@ -184,12 +200,10 @@ export function createItemSearch(opts: ItemSearchOptions): ItemSearch {
   function foundMessage(): string {
     const total = items.length;
     if (total === 0) return MESSAGES.none;
-    const high = items.filter((item) => item.level > limit).length;
+    const out = blocked.filter((reasons) => reasons.length > 0).length;
     const found = `${total} ${total === 1 ? 'item' : 'items'} found`;
-    if (high === total) {
-      return `${found}, all above the level you can Craft.`;
-    }
-    const note = high > 0 ? `, ${high} above the level you can Craft` : '';
+    if (out === total) return `${found}, none you can Craft yet.`;
+    const note = out > 0 ? `, ${out} you can't Craft yet` : '';
     return `${found}${note}. Use the arrow keys to choose one.`;
   }
 

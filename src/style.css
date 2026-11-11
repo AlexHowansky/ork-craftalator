@@ -213,7 +213,7 @@ h3 {
       color-mix(in srgb, var(--paper-edge) 55%, transparent),
     inset 0 0 0.35rem color-mix(in srgb, var(--paper-edge) 40%, transparent),
     var(--shadow);
-  padding: 1.0rem;
+  padding: 1rem;
 }
 
 .inputs .panel:nth-child(2) {
@@ -413,6 +413,24 @@ input[aria-invalid='true']:focus-visible {
 
 .field:last-child {
   margin-bottom: 0;
+}
+
+fieldset.feats {
+  border: 0;
+  padding: 0;
+  margin-inline: 0;
+  min-width: 0;
+}
+
+fieldset.feats legend {
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+fieldset.feats .checkbox-field + .checkbox-field {
+  margin-top: 0.4rem;
 }
 
 .checkbox-field input {

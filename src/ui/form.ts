@@ -13,6 +13,7 @@ import {
   PROFICIENCIES,
   RARITIES,
   RULES_VERSIONS,
+  type CraftingFeat,
   type Proficiency,
   type Rarity,
   type RulesVersion,
@@ -63,6 +64,11 @@ export function initForm(): void {
   const price = byId('price', HTMLInputElement);
   const priceError = byId('price-error', HTMLElement);
   const itemLimit = byId('item-level-limit', HTMLElement);
+  const featBoxes: Readonly<Record<CraftingFeat, HTMLInputElement>> = {
+    alchemical: byId('has-alchemical', HTMLInputElement),
+    magical: byId('has-magical', HTMLInputElement),
+    snare: byId('has-snare', HTMLInputElement),
+  };
 
   // Ignore change events fired while the inputs are being set up.
   let ready = false;
@@ -198,6 +204,7 @@ export function initForm(): void {
     selected: byId('item-search-selected', HTMLElement),
     source: byId('item-search-source', HTMLElement),
     maxLevel: () => maxItemLevel(characterLevel.value, currentProficiency()),
+    hasFeat: (feat) => featBoxes[feat].checked,
     onSelect: (item) => {
       price.value = formatCp(item.priceCp);
       rarity.value = item.rarity;

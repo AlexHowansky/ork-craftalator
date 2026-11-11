@@ -25,6 +25,11 @@ Pathfinder 2nd edition role playing system.
     when Specialty Crafting is checked and the crafter is a master or
     legendary in Crafting; otherwise it is unchecked.
 
+  * Crafting feats. Implemented as three checkboxes: Has Alchemical
+    Crafting, Has Magical Crafting and Has Snare Crafting. All unchecked
+    by default. They don't change the calculation; they limit which items
+    the item search lets the crafter choose (see Item search).
+
   * Crafting skill proficiency level. Implemented as a selector. Values are:
     trained, expert, master, legendary.
 
@@ -50,9 +55,16 @@ Pathfinder 2nd edition role playing system.
     match (mouse or arrow keys and Enter) fills in the item level and the item
     Price, sets the rarity and recalculates everything, including the
     Crafting DC and initial cost. A link to the item's AoN page is then shown.
-    Matches above the highest level the crafter can Craft (see Item level
-    limit) are shown ghosted, marked too high to Craft, and can't be
-    chosen; the arrow keys skip them. A note under the box credits AoN
+    Matches the crafter can't Craft yet are shown ghosted (greyed out)
+    and can't be chosen; the arrow keys skip them. That is, matches
+    above the highest level the crafter can Craft (see Item level limit),
+    marked too high to Craft, and matches that need a Crafting feat the
+    crafter lacks, marked e.g. "needs Magical Crafting". An item needs
+    Alchemical Crafting if it has the alchemical trait, Magical Crafting
+    if it has the magical trait or a magic tradition trait (arcane,
+    divine, occult, primal), and Snare Crafting if it has the snare
+    trait; an item can need more than one. The bundled copy records the
+    feats each item needs. A note under the box credits AoN
     and, once the item data has loaded (when the box is first focused),
     gives the date of the copy. If the item data can't be loaded, a
     message says so and the level and Price can still be entered by
@@ -97,7 +109,8 @@ Pathfinder 2nd edition role playing system.
   system.
 
 * Layout: three panels. Crafter holds, in order, the rules version,
-  character level, Crafting proficiency and Crafting bonus. Item holds the item
+  character level, Crafting proficiency, Crafting bonus and the Crafting
+  feat checkboxes. Item holds the item
   search, item level, item Price, rarity and the formula, Specialty Crafting and
   Impeccable Crafting checkboxes. Results holds the outputs, the
   additional days spent and the failure outcomes. On a wide screen the

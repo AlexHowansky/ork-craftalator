@@ -7,7 +7,13 @@
  * APIs, and import other modules with explicit `.ts` extensions.
  */
 import { MAX_PRICE_CP } from './money.ts';
-import { LIMITS, RARITIES, type Rarity } from './rules/types.ts';
+import {
+  CRAFTING_FEATS,
+  LIMITS,
+  RARITIES,
+  type CraftingFeat,
+  type Rarity,
+} from './rules/types.ts';
 
 export const AON_SEARCH_URL = 'https://elasticsearch.aonprd.com/aon/_search';
 export const AON_SITE = 'https://2e.aonprd.com';
@@ -21,6 +27,20 @@ const CATEGORIES = ['equipment', 'weapon', 'armor', 'shield'] as const;
 /** AoN page paths look like "/Equipment.aspx?ID=2943". */
 const AON_PATH = /^\/[A-Za-z]+\.aspx\?ID=\d+$/;
 
+/**
+ * Traits that need a Crafting feat. Items with a magic tradition trait are
+ * magic items even without the magical trait (mostly Legacy items).
+ */
+const FEAT_TRAITS: Readonly<Record<string, CraftingFeat>> = Object.freeze({
+  Alchemical: 'alchemical',
+  Magical: 'magical',
+  Arcane: 'magical',
+  Divine: 'magical',
+  Occult: 'magical',
+  Primal: 'magical',
+  Snare: 'snare',
+});
+
 const MAX_NAME_LENGTH = 200;
 const MAX_ID_LENGTH = 100;
 
@@ -33,6 +53,8 @@ export interface ItemMatch {
   readonly rarity: Rarity;
   /** True for a Legacy item that has a Remaster replacement. */
   readonly legacy: boolean;
+  /** Crafting feats needed to Craft the item, in CRAFTING_FEATS order. */
+  readonly feats: readonly CraftingFeat[];
   /** Absolute link to the item's AoN page, or null if unknown. */
   readonly url: string | null;
 }
@@ -45,6 +67,8 @@ export interface StoredItem {
   readonly priceCp: number;
   readonly rarity: Rarity;
   readonly legacy: boolean;
+  /** Crafting feats needed to Craft the item, in CRAFTING_FEATS order. */
+  readonly feats: readonly CraftingFeat[];
   /** AoN page path, e.g. "/Equipment.aspx?ID=2943", or null. */
   readonly path: string | null;
 }
@@ -55,7 +79,15 @@ export function buildCatalogQuery(): object {
     size: MAX_HITS,
     track_total_hits: true,
     sort: [{ level: 'asc' }, '_doc'],
-    _source: ['name', 'level', 'price', 'rarity', 'url', 'remaster_id'],
+    _source: [
+      'name',
+      'level',
+      'price',
+      'rarity',
+      'url',
+      'remaster_id',
+      'trait_raw',
+    ],
     query: {
       bool: {
         filter: [
@@ -85,6 +117,24 @@ function validPath(path: unknown): string | null {
   return typeof path === 'string' && AON_PATH.test(path) ? path : null;
 }
 
+/** Keep only known feats, once each, in CRAFTING_FEATS order. */
+function validFeats(feats: unknown): CraftingFeat[] {
+  if (!Array.isArray(feats)) return [];
+  return CRAFTING_FEATS.filter((f) => feats.includes(f));
+}
+
+/** Crafting feats needed for an item with these AoN traits. */
+export function featsForTraits(traits: unknown): CraftingFeat[] {
+  if (!Array.isArray(traits)) return [];
+  return validFeats(
+    traits.map((t) =>
+      typeof t === 'string' && Object.hasOwn(FEAT_TRAITS, t)
+        ? FEAT_TRAITS[t]
+        : undefined,
+    ),
+  );
+}
+
 /** Validate an item's fields; returns null for anything unusable. */
 export function toStoredItem(fields: {
   id: unknown;
@@ -93,9 +143,10 @@ export function toStoredItem(fields: {
   priceCp: unknown;
   rarity: unknown;
   legacy: boolean;
+  feats: unknown;
   path: unknown;
 }): StoredItem | null {
-  const { id, name, level, priceCp, rarity, legacy, path } = fields;
+  const { id, name, level, priceCp, rarity, legacy, feats, path } = fields;
   if (typeof id !== 'string' || id === '' || id.length > MAX_ID_LENGTH) {
     return null;
   }
@@ -115,6 +166,7 @@ export function toStoredItem(fields: {
       ? (rarity as Rarity)
       : 'common',
     legacy,
+    feats: validFeats(feats),
     path: validPath(path),
   };
 }
@@ -131,6 +183,7 @@ export function parseHit(hit: unknown): StoredItem | null {
     priceCp: src['price'],
     rarity: src['rarity'],
     legacy: Array.isArray(remasterId) && remasterId.length > 0,
+    feats: featsForTraits(src['trait_raw']),
     path: src['url'],
   });
 }
@@ -145,6 +198,7 @@ export function parseStoredItem(v: unknown): StoredItem | null {
     priceCp: v['priceCp'],
     rarity: v['rarity'],
     legacy: v['legacy'] === true,
+    feats: v['feats'],
     path: v['path'],
   });
 }

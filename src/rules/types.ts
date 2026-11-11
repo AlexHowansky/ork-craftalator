@@ -13,6 +13,17 @@ export type RulesVersion = (typeof RULES_VERSIONS)[number];
 export const RARITIES = ['common', 'uncommon', 'rare', 'unique'] as const;
 export type Rarity = (typeof RARITIES)[number];
 
+/** Feats needed to Craft items with certain traits. */
+export const CRAFTING_FEATS = ['alchemical', 'magical', 'snare'] as const;
+export type CraftingFeat = (typeof CRAFTING_FEATS)[number];
+
+export const CRAFTING_FEAT_NAMES: Readonly<Record<CraftingFeat, string>> =
+  Object.freeze({
+    alchemical: 'Alchemical Crafting',
+    magical: 'Magical Crafting',
+    snare: 'Snare Crafting',
+  });
+
 export type Degree = 'criticalSuccess' | 'success';
 
 export const LIMITS = Object.freeze({

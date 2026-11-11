@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SearchError, type Catalog, type ItemMatch } from '../src/items';
-import { MESSAGES, createItemSearch, sourceText } from '../src/ui/itemSearch';
+import type { CraftingFeat } from '../src/rules/types';
+import {
+  MESSAGES,
+  blockers,
+  createItemSearch,
+  sourceText,
+} from '../src/ui/itemSearch';
 
 const potion: ItemMatch = {
   id: 'p1',
@@ -9,6 +15,7 @@ const potion: ItemMatch = {
   priceCp: 400,
   rarity: 'common',
   legacy: false,
+  feats: ['magical'],
   url: 'https://2e.aonprd.com/Equipment.aspx?ID=2943',
 };
 const sword: ItemMatch = {
@@ -18,6 +25,7 @@ const sword: ItemMatch = {
   priceCp: 100,
   rarity: 'uncommon',
   legacy: true,
+  feats: [],
   url: null,
 };
 
@@ -27,6 +35,7 @@ function setup(
   search = vi.fn().mockResolvedValue([potion, sword]),
   maxLevel = 20,
   load = vi.fn().mockResolvedValue(catalog),
+  hasFeat: (feat: CraftingFeat) => boolean = () => true,
 ) {
   document.body.replaceChildren();
   const input = document.createElement('input');
@@ -45,6 +54,7 @@ function setup(
     source,
     onSelect,
     maxLevel: () => maxLevel,
+    hasFeat,
     search,
     load,
     debounceMs: 0,
@@ -122,7 +132,7 @@ describe('createItemSearch', () => {
     expect(high?.getAttribute('aria-disabled')).toBe('true');
     expect(high?.textContent).toContain('too high to Craft');
     expect(ok?.hasAttribute('aria-disabled')).toBe(false);
-    expect(status.textContent).toContain('1 above the level you can Craft');
+    expect(status.textContent).toContain("1 you can't Craft yet");
     (high as HTMLElement).click();
     expect(onSelect).not.toHaveBeenCalled();
   });
@@ -145,9 +155,28 @@ describe('createItemSearch', () => {
     await settle();
     key(input, 'ArrowDown');
     expect(input.hasAttribute('aria-activedescendant')).toBe(false);
-    expect(status.textContent).toBe(
-      '1 item found, all above the level you can Craft.',
+    expect(status.textContent).toBe('1 item found, none you can Craft yet.');
+  });
+
+  it('ghosts items that need a Crafting feat the crafter lacks', async () => {
+    const hasFeat = vi.fn((feat: CraftingFeat) => feat !== 'magical');
+    const { input, list, status, onSelect } = setup(
+      undefined,
+      20,
+      undefined,
+      hasFeat,
     );
+    type(input, 'heal');
+    await settle();
+    const [potionOpt, swordOpt] = Array.from(list.children);
+    expect(potionOpt?.getAttribute('aria-disabled')).toBe('true');
+    expect(potionOpt?.textContent).toContain(
+      'Level 1 (needs Magical Crafting)',
+    );
+    expect(swordOpt?.hasAttribute('aria-disabled')).toBe(false);
+    expect(status.textContent).toContain("1 you can't Craft yet");
+    (potionOpt as HTMLElement).click();
+    expect(onSelect).not.toHaveBeenCalled();
   });
 
   it('closes on Escape', async () => {
@@ -214,5 +243,18 @@ describe('createItemSearch', () => {
     input.dispatchEvent(new Event('focus'));
     await settle();
     expect(source.textContent).toBe(MESSAGES.source);
+  });
+});
+
+describe('blockers', () => {
+  const none = () => false;
+  it('lists every reason an item cannot be Crafted', () => {
+    const item = { ...potion, feats: ['alchemical', 'snare'] as const };
+    expect(blockers(item, 0, none)).toEqual([
+      'too high to Craft',
+      'needs Alchemical Crafting',
+      'needs Snare Crafting',
+    ]);
+    expect(blockers(item, 1, () => true)).toEqual([]);
   });
 });

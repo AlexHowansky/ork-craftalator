@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   MAX_HITS,
   buildCatalogQuery,
+  featsForTraits,
   parseResponse,
   parseStoredItem,
   toItemMatch,
@@ -18,6 +19,7 @@ const minor = hit('equipment-2943-2812', {
   price: 400,
   rarity: 'common',
   url: '/Equipment.aspx?ID=2943',
+  trait_raw: ['Consumable', 'Healing', 'Magical', 'Potion', 'Vitality'],
 });
 
 describe('buildCatalogQuery', () => {
@@ -45,6 +47,7 @@ describe('parseResponse', () => {
         priceCp: 400,
         rarity: 'common',
         legacy: false,
+        feats: ['magical'],
         path: '/Equipment.aspx?ID=2943',
       },
     ]);
@@ -61,6 +64,7 @@ describe('parseResponse', () => {
     const [item] = parseResponse({ hits: { hits: [legacy] } }).items;
     expect(item?.legacy).toBe(true);
     expect(item?.rarity).toBe('common');
+    expect(item?.feats).toEqual([]);
   });
 
   it('skips unusable hits and duplicates', () => {
@@ -98,6 +102,20 @@ describe('parseResponse', () => {
   });
 });
 
+describe('featsForTraits', () => {
+  it('maps traits to the Crafting feats they need', () => {
+    expect(featsForTraits(['Snare', 'Alchemical', 'Magical'])).toEqual([
+      'alchemical',
+      'magical',
+      'snare',
+    ]);
+    expect(featsForTraits(['Divine', 'Primal'])).toEqual(['magical']);
+    expect(featsForTraits(['Consumable', 'magical', 7, null])).toEqual([]);
+    expect(featsForTraits(['toString', '__proto__'])).toEqual([]);
+    expect(featsForTraits('Magical')).toEqual([]);
+  });
+});
+
 describe('parseStoredItem', () => {
   it('validates a stored entry', () => {
     const stored = {
@@ -107,9 +125,19 @@ describe('parseStoredItem', () => {
       priceCp: 10,
       rarity: 'rare',
       legacy: true,
+      feats: ['snare', 'alchemical'],
       path: '/Armor.aspx?ID=1',
     };
-    expect(parseStoredItem(stored)).toEqual({ ...stored, name: 'X' });
+    expect(parseStoredItem(stored)).toEqual({
+      ...stored,
+      name: 'X',
+      feats: ['alchemical', 'snare'],
+    });
+    expect(
+      parseStoredItem({ ...stored, feats: ['magical', '<b>', 'magical'] })
+        ?.feats,
+    ).toEqual(['magical']);
+    expect(parseStoredItem({ ...stored, feats: undefined })?.feats).toEqual([]);
     expect(parseStoredItem({ ...stored, priceCp: 0 })).toBeNull();
     expect(parseStoredItem({ ...stored, rarity: '<b>' })?.rarity).toBe(
       'common',
