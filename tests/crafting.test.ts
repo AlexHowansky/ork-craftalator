@@ -5,10 +5,12 @@ import {
   checkOdds,
   craftDc,
   dailyReduction,
+  failureResult,
   formulaPrice,
   maxAdditionalDays,
   itemLevelLimitReason,
   maxItemLevel,
+  ruinedMaterials,
   setupDays,
   specialtyBonus,
   impeccableAllowed,
@@ -194,6 +196,41 @@ describe('calculate', () => {
     const r = calculate({ ...base, additionalDays: 50 });
     expect(r.criticalSuccess.additionalCostCp).toBe(0);
     expect(r.criticalSuccess.totalDays).toBe(2 + 34);
+  });
+});
+
+describe('failure outcomes', () => {
+  it('ruins 10% of the materials, rounded up to the copper', () => {
+    expect(ruinedMaterials(1000)).toBe(100);
+    expect(ruinedMaterials(25)).toBe(3);
+    expect(ruinedMaterials(1)).toBe(1);
+    expect(ruinedMaterials(0)).toBe(0);
+  });
+
+  it('salvages everything on a failure', () => {
+    expect(failureResult(1000, 2, false)).toEqual({
+      lostCp: 0,
+      salvagedCp: 1000,
+      daysLost: 2,
+    });
+  });
+
+  it('salvages the rest on a critical failure', () => {
+    expect(failureResult(1003, 1, true)).toEqual({
+      lostCp: 101,
+      salvagedCp: 902,
+      daysLost: 1,
+    });
+  });
+
+  it('is included in the full result', () => {
+    const r = calculate({ ...base, hasFormula: true });
+    expect(r.failure).toEqual({ lostCp: 0, salvagedCp: 1000, daysLost: 1 });
+    expect(r.criticalFailure).toEqual({
+      lostCp: 100,
+      salvagedCp: 900,
+      daysLost: 1,
+    });
   });
 });
 

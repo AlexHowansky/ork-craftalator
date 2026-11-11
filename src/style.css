@@ -93,7 +93,7 @@ body {
 .site-header {
   max-width: 64rem;
   margin: 0 auto;
-  padding: 1.5rem 1rem 0.75rem;
+  padding: 0.5rem 1rem 0.75rem;
 }
 
 h1 {
@@ -152,7 +152,7 @@ h3 {
 .layout {
   max-width: 64rem;
   margin: 0 auto;
-  padding: 1rem 1rem 1.5rem;
+  padding: 0rem 1rem 1.5rem;
 }
 
 @media (min-width: 52rem) {
@@ -213,7 +213,7 @@ h3 {
       color-mix(in srgb, var(--paper-edge) 55%, transparent),
     inset 0 0 0.35rem color-mix(in srgb, var(--paper-edge) 40%, transparent),
     var(--shadow);
-  padding: 1.5rem;
+  padding: 1.0rem;
 }
 
 .inputs .panel:nth-child(2) {
@@ -598,6 +598,7 @@ input[aria-invalid='true']:focus-visible {
 
 .degrees {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
   font-size: 0.92rem;
@@ -606,8 +607,13 @@ input[aria-invalid='true']:focus-visible {
 .degrees th,
 .degrees td {
   text-align: left;
-  padding: 0.6rem 0.5rem;
+  padding: 0.45rem 0.5rem;
   border-bottom: 1px solid var(--border);
+}
+
+/* Same column widths in both tables so they line up. */
+.degrees tr > :first-child {
+  width: 46%;
 }
 
 .degrees tr > :first-child {
@@ -636,6 +642,10 @@ input[aria-invalid='true']:focus-visible {
 .degrees td {
   font-weight: 600;
   white-space: nowrap;
+}
+
+.degrees.failures {
+  margin-top: 0.75rem;
 }
 
 .visually-hidden {

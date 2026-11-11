@@ -323,10 +323,38 @@
             </tr>
           </tbody>
         </table>
+
+        <table class="degrees failures" aria-live="polite">
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Value</span></th>
+              <th scope="col">Failure</th>
+              <th scope="col">Critical failure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Materials lost</th>
+              <td id="f-lost">-</td>
+              <td id="cf-lost">-</td>
+            </tr>
+            <tr>
+              <th scope="row">Materials salvaged</th>
+              <td id="f-salvaged">-</td>
+              <td id="cf-salvaged">-</td>
+            </tr>
+            <tr>
+              <th scope="row">Days lost</th>
+              <td id="f-days-lost">-</td>
+              <td id="cf-days-lost">-</td>
+            </tr>
+          </tbody>
+        </table>
         <p class="hint">
           "Cost to finish now" is what you still pay in materials after the
-          additional days chosen above. On a failure you salvage all the
-          materials; on a critical failure you lose 10% of them.
+          additional days chosen above. On a failure the item isn't made;
+          salvaged materials can go toward a new attempt, which starts over with
+          setup.
         </p>
       </section>
     </main>

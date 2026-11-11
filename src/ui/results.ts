@@ -1,6 +1,10 @@
 /** Writes a CraftingResult into the results panel (textContent only). */
 import { formatCp } from '../money';
-import type { CraftingResult, DegreeResult } from '../rules/crafting';
+import type {
+  CraftingResult,
+  DegreeResult,
+  FailureResult,
+} from '../rules/crafting';
 import { byId } from './dom';
 
 const pct = (p: number): string => `${Math.round(p * 100)}%`;
@@ -18,6 +22,12 @@ function renderDegree(prefix: string, r: DegreeResult, setup: number): void {
   text(`${prefix}-add-cost`, formatCp(r.additionalCostCp));
   text(`${prefix}-total-cost`, formatCp(r.totalCostCp));
   text(`${prefix}-total-days`, days(r.totalDays));
+}
+
+function renderFailure(prefix: string, r: FailureResult): void {
+  text(`${prefix}-lost`, formatCp(r.lostCp));
+  text(`${prefix}-salvaged`, formatCp(r.salvagedCp));
+  text(`${prefix}-days-lost`, days(r.daysLost));
 }
 
 function renderOdds(result: CraftingResult): void {
@@ -65,6 +75,8 @@ export function renderResult(result: CraftingResult): void {
   );
   renderDegree('s', result.success, result.setupDays);
   renderDegree('cs', result.criticalSuccess, result.setupDays);
+  renderFailure('f', result.failure);
+  renderFailure('cf', result.criticalFailure);
 }
 
 const OUTPUT_IDS = [
@@ -81,6 +93,9 @@ const OUTPUT_IDS = [
       'total-cost',
       'total-days',
     ].map((k) => `${p}-${k}`),
+  ),
+  ...['f', 'cf'].flatMap((p) =>
+    ['lost', 'salvaged', 'days-lost'].map((k) => `${p}-${k}`),
   ),
 ];
 

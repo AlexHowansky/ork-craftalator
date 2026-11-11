@@ -82,6 +82,14 @@ export function additionalCost(
   return Math.max(0, remainingCp - Math.max(0, days) * perDayCp);
 }
 
+/**
+ * Raw materials ruined on a critical failure: 10% of those supplied,
+ * rounded up to the copper.
+ */
+export function ruinedMaterials(upfrontCp: number): number {
+  return Math.ceil(Math.max(0, upfrontCp) / 10);
+}
+
 export interface CheckOdds {
   readonly criticalSuccess: number;
   readonly success: number;
@@ -193,6 +201,26 @@ export interface DegreeResult {
   readonly totalDays: number;
 }
 
+/** What a failed Crafting check costs. */
+export interface FailureResult {
+  /** Raw materials ruined. */
+  readonly lostCp: number;
+  /** Raw materials salvaged, usable for a fresh attempt. */
+  readonly salvagedCp: number;
+  /** Setup days spent before the check; a retry starts over. */
+  readonly daysLost: number;
+}
+
+/** Failure and critical failure outcomes for the upfront materials. */
+export function failureResult(
+  upfrontCp: number,
+  setup: number,
+  critical: boolean,
+): FailureResult {
+  const lostCp = critical ? ruinedMaterials(upfrontCp) : 0;
+  return { lostCp, salvagedCp: upfrontCp - lostCp, daysLost: setup };
+}
+
 export interface CraftingResult {
   readonly setupDays: number;
   readonly upfrontCp: number;
@@ -207,6 +235,8 @@ export interface CraftingResult {
   readonly maxDays: number;
   readonly success: DegreeResult;
   readonly criticalSuccess: DegreeResult;
+  readonly failure: FailureResult;
+  readonly criticalFailure: FailureResult;
 }
 
 function degreeResult(
@@ -278,5 +308,7 @@ export function calculate(inputs: CraftingInputs): CraftingResult {
     maxDays: success.maxDays,
     success,
     criticalSuccess,
+    failure: failureResult(upfront, setup, false),
+    criticalFailure: failureResult(upfront, setup, true),
   };
 }

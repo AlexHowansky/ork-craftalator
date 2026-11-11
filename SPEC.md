@@ -99,9 +99,10 @@ Pathfinder 2nd edition role playing system.
 * Layout: three panels. Crafter holds, in order, the rules version,
   character level, Crafting proficiency and Crafting bonus. Item holds the item
   search, item level, item Price, rarity and the formula, Specialty Crafting and
-  Impeccable Crafting checkboxes. Results holds the outputs and the
-  additional days spent. On a wide screen the three sit side by side and
-  everything fits a 1920x1080 window without scrolling; on a medium screen
+  Impeccable Crafting checkboxes. Results holds the outputs, the
+  additional days spent and the failure outcomes. On a wide screen the
+  three sit side by side and everything fits a 1920x1080 window without
+  scrolling; on a medium screen
   Crafter and Item stack beside Results; on a narrow screen all three
   stack.
 
@@ -122,9 +123,9 @@ Pathfinder 2nd edition role playing system.
   19: 2,000 gp, 20: 3,500 gp.
 
 * Crafting check DC: the DCs by Level table for the item level, adjusted
-  for rarity: uncommon +2, rare +5, unique +10. The app shows the chance of each degree of success using
-  the Crafting skill bonus on a d20, including the natural 1 and natural 20
-  rules.
+  for rarity: uncommon +2, rare +5, unique +10. The app shows the chance
+  of each degree of success using the Crafting skill bonus on a d20,
+  including the natural 1 and natural 20 rules.
 
 * Specialty Crafting: when the feat applies, the Crafting check gets a +1
   circumstance bonus, or +2 if the crafter is a master (or legendary) in
@@ -153,6 +154,13 @@ Pathfinder 2nd edition role playing system.
 
 * Results are shown side by side for both a success and a critical success,
   using the same additional days value.
+
+* Failure outcomes are shown side by side in a second table, for a
+  failure and a critical failure: materials lost, materials salvaged and
+  days lost (the setup days). On a failure all the raw materials are
+  salvaged; on a critical failure 10% of them are ruined (rounded up to
+  the copper) and the rest salvaged. Either way the item isn't made and
+  a new attempt starts over with setup.
 
 * Item level limit: the item must be the crafter's level or lower. If the
   item is 9th level or higher, the crafter must be a master in Crafting,
