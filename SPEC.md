@@ -101,8 +101,9 @@ Pathfinder 2nd edition role playing system.
   dark mode the paper is a dim, aged brown. Brass and copper are used as
   accents (focus rings, and sliders whose thumb is a brass anvil on a
   grooved track, brass to the left of the thumb and white to the
-  right). The title and panel headers use New Rocker, a hammered
-  blackletter display face; other headings and key figures use a serif;
+  right). A large brass anvil, the same as the slider thumb, sits to
+  the left of the title. The title and panel headers use New Rocker, a
+  hammered blackletter display face; other headings and key figures use a serif;
   body text uses the system sans-serif. All text uses the full text
   colour (black on light paper), never a muted grey, so it stays
   readable on the textured paper. Light and dark modes follow the
