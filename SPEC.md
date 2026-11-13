@@ -97,7 +97,8 @@ Pathfinder 2nd edition role playing system.
   proficiency, Crafting bonus and the Crafting feat checkboxes) is
   remembered in the browser and restored on the next visit. Saved values
   that are invalid fall back to the defaults. The Item panel is not
-  remembered.
+  remembered. The calculator stays hidden until the saved values are
+  applied, so the defaults never flash on reload.
 
 * Appearance: a modern steampunk theme over a fixed parchment blueprint
   backdrop, softened by a wash of the page colour (heavier in dark mode)

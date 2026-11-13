@@ -171,6 +171,14 @@ h3 {
   padding: 0rem 1rem 1.5rem;
 }
 
+/*
+ * Hidden (but still taking up space) until startup has restored the saved
+ * Crafter settings, so the HTML defaults never flash on reload.
+ */
+.layout.loading {
+  visibility: hidden;
+}
+
 @media (min-width: 52rem) {
   .layout {
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);

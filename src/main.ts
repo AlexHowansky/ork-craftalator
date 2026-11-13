@@ -21,6 +21,8 @@ window.addEventListener('unhandledrejection', (e) =>
 
 try {
   initForm();
+  // Reveal the calculator now that the saved settings are in place.
+  document.querySelector('main.layout')?.classList.remove('loading');
 } catch (err) {
   log.error('Startup failed', err);
   showFatal();
